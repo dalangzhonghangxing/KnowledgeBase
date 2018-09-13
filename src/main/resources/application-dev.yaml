@@ -1,0 +1,128 @@
+user:
+    admin:
+        accountName: admin
+        password: admin
+        roleIds: 1,2
+    robot:
+        accountName: robot
+        password: yjsy_robot_11235
+        roleIds: 33
+ecnu:
+    yjsy:
+        auth:
+            enabled: true
+            basic-enabled: true
+            form-login: true
+            login-url: /api/login
+            logout-url: /api/logout
+            site-domain: http://localhost:63344,http://localhost:63343,https://localhost:63342,http://localhost:63342
+            site-login-path: /yjsy-ui/build/login/login.html
+        filesystem: ../../data
+        loaddata: false
+        loadmeta: false
+        synchronize:
+            enabled: true
+            base-url: "http://59.78.176.134:8091/IDCSync/"
+endpoints:
+    shutdown:
+        enabled: false
+exchange:
+    xj:
+        lxrequest: xj.lxrequest
+        lxrequest.audits: xj.lxrequest.audits
+        student:
+            add: xj.student.add
+            delete: xj.student.delete
+        ydrequest: xj.ydrequest
+        ydrequest.audits: xj.yd.request.audits
+logging:
+    file: log/yjsy.log
+    pattern:
+        level: '%X{requestID} %X{userID} %X{pid} %5p'
+server:
+    port: 8889
+    session:
+        timeout: '3600'
+        cookie:
+            max-age: '3600'
+    tomcat:
+        protocol_header: x-forwarded-proto
+        remote_ip_header: x-forwarded-for
+spring:
+    data:
+        rest:
+            base-uri: api
+    http:
+        encoding:
+             charset: UTF-8
+             force: true
+             enabled: true
+    servlet:
+      multipart:
+        enabled: true
+        max-file-size: 50MB
+        max-request-size: 50MB
+    jpa:
+        database: MYSQL
+        hibernate:
+            ddl-auto: update
+            naming:
+                implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+                physical-strategy: edu.ecnu.yjsy.common.TableNamingStrategy
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MariaDB53Dialect
+#                dialect: org.hibernate.dialect.MySQL5Dialect
+        show-sql: true
+        open-in-view: true
+    jwc:
+        datasource:
+            driverClassName: oracle.jdbc.OracleDriver
+            password: test
+            tomcat:
+                initial-size: 2
+                max-active: 10
+                max-idle: 24
+                min-evictable-idle-time-millis: 55000
+                min-idle: 13
+                test-on-borrow: true
+                test-while-idle: true
+                time-between-eviction-runs-millis: 34000
+                validation-query: SELECT 1
+            url: jdbc:oracle:thin:@localhost:1521:yjsyseconda
+            username: test
+    mvc:
+        dispatch-options-request: true
+    rabbitmq:
+        addresses: 58.198.176.191
+        password: guest
+        port: 5672
+        publisher-confirms: true
+        username: guest
+        virtual-host: /
+    redis:
+        database: 0
+        enable: false
+        host: 58.198.176.191
+        password: myRedis
+        port: 7379
+        timeout: '3000000'
+    session:
+        store-type: none
+    yjsy:
+        datasource:
+            driverClassName: org.mariadb.jdbc.Driver
+#            driverClassName: com.mysql.jdbc.Driver
+            tomcat:
+                initial-size: 5
+                max-active: 10
+                max-idle: 24
+                min-evictable-idle-time-millis: 55000
+                min-idle: 13
+                test-on-borrow: true
+                test-while-idle: true
+                time-between-eviction-runs-millis: 34000
+                validation-query: SELECT 1
+            url: jdbc:mariadb://58.198.176.191:3306/yjsy_py?useUnicode=true&characterEncoding=UTF-8&useOldAliasMetadataBehavior=true
+            username: yjsy_nginx
+            password: root
