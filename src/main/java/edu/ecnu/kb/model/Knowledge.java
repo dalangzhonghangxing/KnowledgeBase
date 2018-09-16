@@ -1,4 +1,4 @@
-package src.model;
+package edu.ecnu.kb.model;
 
 import lombok.Data;
 
@@ -17,6 +17,6 @@ import javax.persistence.Table;
 public class Knowledge extends BaseModel {
 
     //知识点名称
-    @Column
+    @Column(unique = true)
     private String name;
 }

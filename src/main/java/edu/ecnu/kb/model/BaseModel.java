@@ -1,4 +1,4 @@
-package src.model;
+package edu.ecnu.kb.model;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

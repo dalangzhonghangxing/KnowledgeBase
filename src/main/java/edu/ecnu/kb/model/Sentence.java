@@ -1,10 +1,8 @@
-package src.model;
+package edu.ecnu.kb.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * 句子，记录原句以及分词后的句子
@@ -17,10 +15,10 @@ import javax.persistence.Table;
 public class Sentence extends BaseModel {
 
     // 原句
-    @Column(columnDefinition = "text")
+    @Column(length = 255, unique = true)
     private String original;
 
     //分词后的句子
-    @Column(columnDefinition = "text")
+    @Column(length = 255)
     private String splited;
 }
