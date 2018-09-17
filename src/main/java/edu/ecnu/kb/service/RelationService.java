@@ -29,7 +29,7 @@ public class RelationService extends BaseService {
     }
 
     public Page<Relation> getByPage(Integer page, Integer size) {
-        return repository.findAll(PageRequest.of(page - 1, size, SORT_ID_DESC));
+        return getByPage(page, size,repository);
     }
 
     public Page<Relation> delete(Long id, Integer page, Integer size) {

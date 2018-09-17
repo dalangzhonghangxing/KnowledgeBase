@@ -1,7 +1,10 @@
 package edu.ecnu.kb.service;
 
 import edu.ecnu.kb.model.*;
+import edu.ecnu.kb.service.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,19 +24,16 @@ public class PairService extends BaseService {
     /**
      * 生成关系对，返回新生成的数量。
      * <p>
-     * 1. 获取所有的sentence
-     * <p>
-     * 2. 获取所有Knowledge
-     * <p>
-     * 3. 获取所有已经存在的知识点对
+     * 支持进度条。
      *
      * @return Map
      */
-    public Map<String, Object> generate() {
+    public Map<String, Object> generate(String tag) {
         // 通过按照id排序来避免多次生成的时候，会产生知识点相反的pair
         List<Sentence> sentences = sentenceRepository.findAll(SORT_ID_DESC);
         List<Knowledge> knowledges = knowledgeRepository.findAll(SORT_ID_DESC);
         List<Pair> pairs = repository.findAll(SORT_ID_DESC);
+        SessionUtil.set(tag, 5);
 
         // 构建已存在的知识点set，提高判断是否存在的性能
         Set<Knowledge[]> existedPairs = new HashSet<>();
@@ -43,18 +43,87 @@ public class PairService extends BaseService {
             existedPair[1] = p.getKnowledgeB();
             existedPairs.add(existedPair);
         }
+        SessionUtil.set(tag, 10);
+
+        // 为每句句子分词后的单词生一个wordset，从而提高查询性能
+        List<Set<String>> wordSets = new ArrayList<>();
+        for (Sentence sentence : sentences) {
+            Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split(" ")));
+            wordSets.add(wordSet);
+        }
+        SessionUtil.set(tag, 15);
 
         // 遍历所有的知识点组合，将不存在的组合生成新的pair。
+        // 因为知识点的顺序是总是按照id，有序地从数据库里面拿，因此不会重复。
         List<Pair> newPairs = new ArrayList<>();
         for (int i = 0; i < knowledges.size(); i++)
             for (int j = i + 1; j < knowledges.size(); j++) {
                 Knowledge[] currentPair = {knowledges.get(i), knowledges.get(j)};
                 if (existedPairs.contains(currentPair))
                     continue;
-                // TODO: 是否修改模型，增加单词表，将sentence分词后的单词从单词表中加载。类似倒排索引，来提高效率。
+                Pair newPair = new Pair();
+                newPair.setKnowledgeA(knowledges.get(i));
+                newPair.setKnowledgeB(knowledges.get(j));
+                for (int k = 0; k < wordSets.size(); k++) {
+                    if (wordSets.get(k).contains(newPair.getKnowledgeA())
+                            && wordSets.get(k).contains(newPair.getKnowledgeB())) {
+                        newPair.getSentences().add(sentences.get(k));
+                    }
+                }
+                newPairs.add(newPair);
+                SessionUtil.set(tag, 70 * (i + 1) * j / (Math.pow(knowledges.size(), 2)));
             }
+        //调用batchSave进行批量保存
+        batchSave(newPairs, repository);
+        SessionUtil.set(tag, 98);
 
-        //
-        return null;
+        Map<String, Object> res = new HashMap<>();
+        res.put("size", newPairs.size());
+        return res;
+    }
+
+    /**
+     * 分页
+     *
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<Pair> getByPage(Integer page, Integer size) {
+        return getByPage(page, size, repository);
+    }
+
+    /**
+     * 获取没有打过标签的pair
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<Pair> getUntagedPairs(Integer page, Integer size){
+        return repository.findUntagedPairs(PageRequest.of(page-1,size,SORT_ID_DESC));
+    }
+    /**
+     * 删除指定对象
+     *
+     * @param id
+     * @param page
+     * @param size
+     * @return
+     */
+    public Page<Pair> delete(Long id, Integer page, Integer size) {
+        repository.deleteById(id);
+        return getByPage(page, size);
+    }
+
+    /**
+     * 给指定pair打上id为relationId的关系
+     *
+     * @param id
+     * @param relationId
+     */
+    public void tag(Long id, Long relationId) {
+        Pair pair = repository.getOne(id);
+        pair.setRelation(new Relation(relationId));
+        repository.save(pair);
     }
 }

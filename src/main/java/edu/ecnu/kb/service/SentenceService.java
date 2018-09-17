@@ -44,7 +44,7 @@ public class SentenceService extends BaseService {
      * @return Page<Sentence>
      */
     public Page<Sentence> getByPage(Integer page, Integer size) {
-        return repository.findAll(PageRequest.of(page - 1, size, SORT_ID_DESC));
+        return getByPage(page, size,repository);
     }
 
     /**

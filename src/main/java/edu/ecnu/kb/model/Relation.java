@@ -23,4 +23,8 @@ public class Relation extends BaseModel {
     // 关系的例子
     @Column(columnDefinition = "text")
     private String example;
+
+    public Relation(Long relationId) {
+        this.id = relationId;
+    }
 }
