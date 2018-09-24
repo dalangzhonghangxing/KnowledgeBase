@@ -73,8 +73,11 @@ public class SentenceService extends BaseService {
         int index = 0;
         for (Sentence sentence : sentences) {
             sentence.setSplited(SplitWordUtils.split(sentence.getOriginal()));
-            SessionUtil.setProgress(tag, 10, index++, sentences.size(), 90);
+            SessionUtil.setProgress(tag, 10, index++, sentences.size(), 85);
         }
+
+        batchSave(sentences, repository);
+        SessionUtil.set(tag, 100);
     }
 
 }

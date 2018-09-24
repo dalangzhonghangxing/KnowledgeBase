@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-public class RelationController extends BaseService {
+public class RelationController extends BaseController {
     final static String BASE_API = "/relation";
 
     @Autowired

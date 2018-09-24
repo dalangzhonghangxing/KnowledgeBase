@@ -60,4 +60,4 @@ spring:
         port: 7379
         timeout: '3000000'
     session:
-        store-type: Redis
+        store-type: None

@@ -34,13 +34,16 @@ public class SplitWordUtils {
 
     /**
      * 更新关键词词库，新增加的关键词的词性都设置为"knowledge"
+     * <p>
+     * 自动以词库的方式请参考
+     * https://github.com/NLPchina/ansj_seg/blob/master/src/test/java/org/ansj/library/DicLibraryTest.java
      */
     public static void updateWordBase(KnowledgeRepository knowledgeRepository) {
         List<Knowledge> knowledges = knowledgeRepository.findAll();
         for (Knowledge knowledge : knowledges) {
             DicLibrary.insert(DicLibrary.DEFAULT, knowledge.getName(), "knowledge", 1000);
         }
-        LOG.info("自定义词库更新成功，总共更新"+knowledges.size()+"个知识点");
+        LOG.info("自定义词库更新成功，总共更新" + knowledges.size() + "个知识点");
     }
 
     /**

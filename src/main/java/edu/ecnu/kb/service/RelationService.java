@@ -5,6 +5,7 @@ import edu.ecnu.kb.model.Relation;
 import edu.ecnu.kb.model.RelationRepository;
 import edu.ecnu.kb.model.Sentence;
 import edu.ecnu.kb.service.upload.KnowledgeRowProcessor;
+import edu.ecnu.kb.service.upload.RelationRowProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +22,7 @@ public class RelationService extends BaseService {
     private RelationRepository repository;
 
     @Autowired
-    private KnowledgeRowProcessor rowProcessor;
+    private RelationRowProcessor rowProcessor;
 
     public Map<String, Object> upload(InputStream file, String tag) {
         List<Knowledge> knowledges = new ArrayList<>();

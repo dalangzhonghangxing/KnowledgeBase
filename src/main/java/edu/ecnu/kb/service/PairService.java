@@ -65,8 +65,8 @@ public class PairService extends BaseService {
                 newPair.setKnowledgeA(knowledges.get(i));
                 newPair.setKnowledgeB(knowledges.get(j));
                 for (int k = 0; k < wordSets.size(); k++) {
-                    if (wordSets.get(k).contains(newPair.getKnowledgeA())
-                            && wordSets.get(k).contains(newPair.getKnowledgeB())) {
+                    if (wordSets.get(k).contains(newPair.getKnowledgeA().getName())
+                            && wordSets.get(k).contains(newPair.getKnowledgeB().getName())) {
                         newPair.getSentences().add(sentences.get(k));
                     }
                 }

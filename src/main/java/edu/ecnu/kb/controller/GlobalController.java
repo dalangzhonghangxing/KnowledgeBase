@@ -25,7 +25,9 @@ public class GlobalController extends BaseController {
     @RequestMapping(value = BASE_API + "/progress", method = RequestMethod.GET)
     public int getProgerss(@RequestParam String tag) {
         Map<String, Object> res = new HashMap<>();
-        return Integer.parseInt(SessionUtil.get(tag).toString().split("\\.")[0]) ;
+        Object tagValue = SessionUtil.get(tag);
+        if(tagValue == null) return 0;
+        return Integer.parseInt(tagValue.toString().split("\\.")[0]) ;
     }
 
 }

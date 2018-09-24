@@ -24,6 +24,10 @@ public class Relation extends BaseModel {
     @Column(columnDefinition = "text")
     private String example;
 
+    public Relation() {
+
+    }
+
     public Relation(Long relationId) {
         this.id = relationId;
     }
