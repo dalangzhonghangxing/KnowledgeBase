@@ -11,11 +11,7 @@ public class SentenceRowProcessor implements RowProcessor {
     public Object processor(String[] line) {
         Sentence sentence = new Sentence();
         sentence.setOriginal(line[0]);
-        StringBuffer splited = new StringBuffer();
-        for (String word:SplitWordUtils.split(line[0])) {
-            splited.append(word).append(" ");
-        }
-        sentence.setSplited(splited.toString());
+        sentence.setSplited(SplitWordUtils.split(line[0]));
         return sentence;
     }
 }
