@@ -42,5 +42,14 @@ public class SentenceController extends BaseController {
 
     }
 
+    /**
+     * 将所有句子进行分词
+     * @param tag
+     */
+    @RequestMapping(value = BASE_API + "/split", method = RequestMethod.POST)
+    public void split(@RequestBody String tag){
+        service.split(tag);
+    }
+
 
 }

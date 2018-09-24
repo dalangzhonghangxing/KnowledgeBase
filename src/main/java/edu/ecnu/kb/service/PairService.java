@@ -70,7 +70,8 @@ public class PairService extends BaseService {
                         newPair.getSentences().add(sentences.get(k));
                     }
                 }
-                newPairs.add(newPair);
+                if(newPair.getSentences().size()>0)
+                    newPairs.add(newPair);
                 SessionUtil.set(tag, 70 * (i + 1) * j / (Math.pow(knowledges.size(), 2)));
             }
         //调用batchSave进行批量保存

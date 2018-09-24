@@ -3,15 +3,15 @@ package edu.ecnu.kb.service;
 import edu.ecnu.kb.model.Sentence;
 import edu.ecnu.kb.model.SentenceRepository;
 import edu.ecnu.kb.service.upload.SentenceRowProcessor;
-import edu.ecnu.kb.service.upload.UploadProcessor;
+import edu.ecnu.kb.service.util.SessionUtil;
+import edu.ecnu.kb.service.util.SplitWordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public class SentenceService extends BaseService {
      *
      * @param file
      * @param tag
-     * @return Map<String       ,               Object>
+     * @return
      */
     public Map<String, Object> upload(InputStream file, String tag) {
         List<Sentence> sentences = new ArrayList<>();
@@ -44,7 +44,7 @@ public class SentenceService extends BaseService {
      * @return Page<Sentence>
      */
     public Page<Sentence> getByPage(Integer page, Integer size) {
-        return getByPage(page, size,repository);
+        return getByPage(page, size, repository);
     }
 
     /**
@@ -59,4 +59,22 @@ public class SentenceService extends BaseService {
         repository.deleteById(id);
         return getByPage(page, size);
     }
+
+
+    /**
+     * 将所有句子进行分词
+     *
+     * @param tag 进度条查询tag
+     */
+    public void split(String tag) {
+        List<Sentence> sentences = repository.findAll();
+        SessionUtil.set(tag, 10);
+
+        int index = 0;
+        for (Sentence sentence : sentences) {
+            sentence.setSplited(SplitWordUtils.split(sentence.getOriginal()));
+            SessionUtil.setProgress(tag, 10, index++, sentences.size(), 90);
+        }
+    }
+
 }

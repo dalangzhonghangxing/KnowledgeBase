@@ -1,5 +1,6 @@
 package edu.ecnu.kb.controller;
 
+import com.alibaba.fastjson.JSON;
 import edu.ecnu.kb.model.Pair;
 import edu.ecnu.kb.service.PairService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ public class PairController extends BaseController {
      * @return
      */
     @RequestMapping(value = BASE_API + "/generate", method = RequestMethod.POST)
-    public Map<String, Object> generate(@RequestParam String tag) {
-        return service.generate(tag);
+    public Map<String, Object> generate(@RequestBody String tag) {
+        return service.generate(JSON.parseObject(tag).getString("tag"));
     }
 
     /**
