@@ -2,6 +2,7 @@ package edu.ecnu.kb.service;
 
 import edu.ecnu.kb.service.upload.RowProcessor;
 import edu.ecnu.kb.service.upload.UploadProcessor;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.boot.jaxb.hbm.spi.JaxbHbmParentType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,26 +105,26 @@ public class BaseService {
      */
     public void setNewValue(Class clazz, Object target, Map<String, Object> newValueMap) {
 
-        // 将clazz中所有属性的名称放入一个set中，其中id不允许修改。
-        Set<String> fieldSet = new HashSet<>();
-        for (Field field : clazz.getFields()) {
-            fieldSet.add(field.getName());
+        // 将clazz中所有属性的名称放入一个map中，其中id不允许修改。
+        Map<String,Field> fieldMap = new HashMap<>();
+        for (Field field : FieldUtils.getAllFields(clazz)) {
+            fieldMap.put(field.getName(),field);
         }
-        fieldSet.remove("id");
+        fieldMap.remove("id");
 
-        // 遍历newValueMap，如果key存在fieldSet中，则将改值覆盖掉target中的值
+        // 遍历newValueMap，如果key存在fieldMap中，则将改值覆盖掉target中的值
         // 通过调用set方法来覆盖值，避免Spring data jpa使用懒加载缓存元数据
         try {
 
             for (String key : newValueMap.keySet()) {
-                if (fieldSet.contains(key)) {
-                    Field field = clazz.getField(key);
+                if (fieldMap.containsKey(key)) {
+                    Field field = fieldMap.get(key);
                     clazz.getMethod("set" + key.substring(0, 1).toUpperCase() + key.substring(1)
-                            , field.getDeclaringClass())
+                            , field.getType())
                             .invoke(target, newValueMap.get(key));
                 }
             }
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException e) {
+        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }

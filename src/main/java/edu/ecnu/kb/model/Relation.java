@@ -29,6 +29,6 @@ public class Relation extends BaseModel {
     }
 
     public Relation(Long relationId) {
-        this.id = relationId;
+        setId(relationId);
     }
 }
