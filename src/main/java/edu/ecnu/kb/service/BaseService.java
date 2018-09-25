@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class BaseService {
 
@@ -91,5 +91,40 @@ public class BaseService {
      */
     public Page getByPage(Integer page, Integer size, JpaRepository repository) {
         return repository.findAll(PageRequest.of(page - 1, size, SORT_ID_DESC));
+    }
+
+    /**
+     * 将newValueMap中的值，赋给target。
+     * <p>
+     * 只会覆盖key与target中的属性值一样才生效，否则自动跳过。
+     *
+     * @param clazz       target的类型
+     * @param target      新对象
+     * @param newValueMap 存放新值得map
+     */
+    public void setNewValue(Class clazz, Object target, Map<String, Object> newValueMap) {
+
+        // 将clazz中所有属性的名称放入一个set中，其中id不允许修改。
+        Set<String> fieldSet = new HashSet<>();
+        for (Field field : clazz.getFields()) {
+            fieldSet.add(field.getName());
+        }
+        fieldSet.remove("id");
+
+        // 遍历newValueMap，如果key存在fieldSet中，则将改值覆盖掉target中的值
+        // 通过调用set方法来覆盖值，避免Spring data jpa使用懒加载缓存元数据
+        try {
+
+            for (String key : newValueMap.keySet()) {
+                if (fieldSet.contains(key)) {
+                    Field field = clazz.getField(key);
+                    clazz.getMethod("set" + key.substring(0, 1).toUpperCase() + key.substring(1)
+                            , field.getDeclaringClass())
+                            .invoke(target, newValueMap.get(key));
+                }
+            }
+        } catch (InvocationTargetException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 }

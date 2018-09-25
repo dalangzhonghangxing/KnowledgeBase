@@ -30,11 +30,21 @@ public class RelationService extends BaseService {
     }
 
     public Page<Relation> getByPage(Integer page, Integer size) {
-        return getByPage(page, size,repository);
+        return getByPage(page, size, repository);
     }
 
     public Page<Relation> delete(Long id, Integer page, Integer size) {
         repository.deleteById(id);
         return getByPage(page, size);
+    }
+
+    public void save(Long id, Map<String, Object> toSaveMap) {
+        Relation relation;
+        if (id != 0)
+            relation = repository.getOne(id);
+        else
+            relation = new Relation();
+        setNewValue(Relation.class, relation, toSaveMap);
+        repository.save(relation);
     }
 }

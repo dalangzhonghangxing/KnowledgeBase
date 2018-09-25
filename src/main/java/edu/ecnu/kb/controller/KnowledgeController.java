@@ -36,4 +36,9 @@ public class KnowledgeController extends BaseController {
     public Page<Knowledge> delete(@PathVariable Long id, @RequestParam Integer page, @RequestParam Integer size) {
         return service.delete(id,page, size);
     }
+
+    @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.POST)
+    public void save(@PathVariable Long id, @RequestBody Map<String, Object> toSaveMap) {
+        service.save(id, toSaveMap);
+    }
 }

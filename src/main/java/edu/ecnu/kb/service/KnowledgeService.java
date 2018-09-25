@@ -35,11 +35,21 @@ public class KnowledgeService extends BaseService {
     }
 
     public Page<Knowledge> getByPage(Integer page, Integer size) {
-        return getByPage(page, size,repository);
+        return getByPage(page, size, repository);
     }
 
     public Page<Knowledge> delete(Long id, Integer page, Integer size) {
         repository.deleteById(id);
         return getByPage(page, size);
+    }
+
+    public void save(Long id, Map<String, Object> toSaveMap) {
+        Knowledge knowledge;
+        if (id != 0)
+            knowledge = repository.getOne(id);
+        else
+            knowledge = new Knowledge();
+        setNewValue(Knowledge.class, knowledge, toSaveMap);
+        repository.save(knowledge);
     }
 }

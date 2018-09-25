@@ -44,12 +44,25 @@ public class SentenceController extends BaseController {
 
     /**
      * 将所有句子进行分词
+     *
      * @param tag
      */
     @RequestMapping(value = BASE_API + "/split", method = RequestMethod.POST)
-    public void split(@RequestBody String tag){
+    public void split(@RequestBody String tag) {
         service.split(tag);
     }
 
+    /**
+     * 用于保存一个对象。
+     * <p>
+     * 如果id是0则表示新增，否则是更新
+     *
+     * @param id
+     * @param toSaveMap
+     */
+    @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.POST)
+    public void save(@PathVariable Long id, @RequestBody Map<String, Object> toSaveMap) {
+        service.save(id, toSaveMap);
+    }
 
 }

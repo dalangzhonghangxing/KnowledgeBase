@@ -80,4 +80,22 @@ public class SentenceService extends BaseService {
         SessionUtil.set(tag, 100);
     }
 
+    /**
+     * 保存一个对象。如果id为0，则新增；否则是保存。保存之前会重新分词。
+     *
+     * @param id
+     * @param toSaveMap
+     */
+    public void save(Long id, Map<String, Object> toSaveMap) {
+        Sentence sentence;
+        if (id != 0)
+            sentence = repository.getOne(id);
+        else
+            sentence = new Sentence();
+        setNewValue(Sentence.class, sentence, toSaveMap);
+
+        // 重新分词
+        sentence.setSplited(SplitWordUtils.split(sentence.getOriginal()));
+        repository.save(sentence);
+    }
 }

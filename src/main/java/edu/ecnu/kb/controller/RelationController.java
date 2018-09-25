@@ -42,4 +42,9 @@ public class RelationController extends BaseController {
         return service.delete(id, page, size);
 
     }
+
+    @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.POST)
+    public void save(@PathVariable Long id, @RequestBody Map<String, Object> toSaveMap) {
+        service.save(id, toSaveMap);
+    }
 }
