@@ -72,6 +72,24 @@
         </profile>
     </profiles>
 
+    <repositories>
+        <!--这个repo是自己搭建的私有repo，这样可以通过缓存加速对maven依赖的下载-->
+        <repository>
+            <id>ecnu_repo</id>
+            <name>Team Nexus Repository</name>
+            <url>
+                http://58.198.176.191:8081/nexus/content/repositories/central/
+            </url>
+        </repository>
+        <!-- 这个repo存放yjsy自己开发项目-->
+        <repository>
+            <id>ecnu</id>
+            <name>ecnu</name>
+            <url>http://58.198.176.191:8081/nexus/content/repositories/ecnu/
+            </url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
