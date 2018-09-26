@@ -3,7 +3,6 @@ package edu.ecnu.kb.service;
 import edu.ecnu.kb.service.upload.RowProcessor;
 import edu.ecnu.kb.service.upload.UploadProcessor;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.hibernate.boot.jaxb.hbm.spi.JaxbHbmParentType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,8 +12,13 @@ import javax.transaction.Transactional;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * 用于抽象所有Service公共的方法，或者继承某个公共的工具类或实现某些公共的接口
+ */
 public class BaseService {
 
     protected final Sort SORT_ID_DESC = new Sort(Sort.Direction.DESC, "id");
@@ -106,9 +110,9 @@ public class BaseService {
     public void setNewValue(Class clazz, Object target, Map<String, Object> newValueMap) {
 
         // 将clazz中所有属性的名称放入一个map中，其中id不允许修改。
-        Map<String,Field> fieldMap = new HashMap<>();
+        Map<String, Field> fieldMap = new HashMap<>();
         for (Field field : FieldUtils.getAllFields(clazz)) {
-            fieldMap.put(field.getName(),field);
+            fieldMap.put(field.getName(), field);
         }
         fieldMap.remove("id");
 
