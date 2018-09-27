@@ -6,12 +6,12 @@ import edu.ecnu.kb.service.upload.SentenceRowProcessor;
 import edu.ecnu.kb.service.util.SessionUtil;
 import edu.ecnu.kb.service.util.SplitWordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +23,7 @@ public class SentenceService extends BaseService {
     @Autowired
     private SentenceRepository repository;
 
+    private static final String[] columnForExport = {"original", "splited"};
 
     /**
      * 上传Sentence，返回上传成功的数量
@@ -97,5 +98,22 @@ public class SentenceService extends BaseService {
         // 重新分词
         sentence.setSplited(SplitWordUtils.split(sentence.getOriginal()));
         repository.save(sentence);
+    }
+
+    /**
+     * 导出所有对象
+     *
+     * @return
+     */
+    public byte[] export() {
+        List<Sentence> sentences = repository.findAll(SORT_ID_DESC);
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (Sentence sentence : sentences) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put(columnForExport[0], sentence.getOriginal());
+            obj.put(columnForExport[1], sentence.getSplited());
+            data.add(obj);
+        }
+        return export(columnForExport, data);
     }
 }

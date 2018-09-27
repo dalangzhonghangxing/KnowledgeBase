@@ -74,4 +74,13 @@ public class PairController extends BaseController {
         return service.getUntagedPairs(page, size);
 
     }
+
+    /**
+     * 导出所有对象
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/export", method = RequestMethod.GET)
+    public byte[] export(){
+        return service.export();
+    }
 }

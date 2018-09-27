@@ -5,11 +5,11 @@ import edu.ecnu.kb.model.KnowledgeRepository;
 import edu.ecnu.kb.service.upload.KnowledgeRowProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +21,8 @@ public class KnowledgeService extends BaseService {
 
     @Autowired
     private KnowledgeRowProcessor rowProcessor;
+
+    private static final String[] columnForExport = {"name"};
 
     /**
      * 上传
@@ -51,5 +53,21 @@ public class KnowledgeService extends BaseService {
             knowledge = new Knowledge();
         setNewValue(Knowledge.class, knowledge, toSaveMap);
         repository.save(knowledge);
+    }
+
+    /**
+     * 导出所有对象
+     *
+     * @return
+     */
+    public byte[] export() {
+        List<Knowledge> knowledges = repository.findAll(SORT_ID_DESC);
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (Knowledge knowledge : knowledges) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put(columnForExport[0], knowledge.getName());
+            data.add(obj);
+        }
+        return export(columnForExport, data);
     }
 }

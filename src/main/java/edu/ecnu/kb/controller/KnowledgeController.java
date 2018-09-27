@@ -34,11 +34,21 @@ public class KnowledgeController extends BaseController {
 
     @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.DELETE)
     public Page<Knowledge> delete(@PathVariable Long id, @RequestParam Integer page, @RequestParam Integer size) {
-        return service.delete(id,page, size);
+        return service.delete(id, page, size);
     }
 
     @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.POST)
     public void save(@PathVariable Long id, @RequestBody Map<String, Object> toSaveMap) {
         service.save(id, toSaveMap);
+    }
+
+    /**
+     * 导出所有对象
+     *
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/export", method = RequestMethod.GET)
+    public byte[] export() {
+        return service.export();
     }
 }

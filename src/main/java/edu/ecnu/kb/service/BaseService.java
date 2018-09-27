@@ -2,14 +2,16 @@ package edu.ecnu.kb.service;
 
 import edu.ecnu.kb.service.upload.RowProcessor;
 import edu.ecnu.kb.service.upload.UploadProcessor;
+import edu.ecnu.kb.service.util.FileUtil;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -131,5 +133,45 @@ public class BaseService {
         } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 将数据导出成以#分割的csv格式
+     *
+     * @param columns 表头,即数据的key
+     * @param data    数据
+     * @return
+     */
+    public byte[] export(String[] columns, List<Map<String, Object>> data) {
+        String title = "";
+        for (String column : columns)
+            title += column + "#";
+        title = title.substring(0, title.length() - 1) + "\n";
+
+        StringBuffer content = new StringBuffer();
+        for (Map<String, Object> obj : data) {
+            for (String column : columns) {
+                content.append(obj.get(column)).append("#");
+            }
+            content.setLength(content.length() - 1);
+            content.append("\n");
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Writer out = new BufferedWriter(new OutputStreamWriter(outputStream));
+
+
+        try {
+            out.write(title + content.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return outputStream.toByteArray();
     }
 }

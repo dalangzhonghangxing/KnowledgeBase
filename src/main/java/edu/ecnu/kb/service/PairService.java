@@ -21,6 +21,8 @@ public class PairService extends BaseService {
     @Autowired
     private PairRepository repository;
 
+    private static final String[] columnForExport = {"knowledgeA", "knowledgeB", "relationName", "relationCode"};
+
     /**
      * 生成关系对，返回新生成的数量。
      * <p>
@@ -70,7 +72,7 @@ public class PairService extends BaseService {
                         newPair.getSentences().add(sentences.get(k));
                     }
                 }
-                if(newPair.getSentences().size()>0)
+                if (newPair.getSentences().size() > 0)
                     newPairs.add(newPair);
                 SessionUtil.set(tag, 70 * (i + 1) * j / (Math.pow(knowledges.size(), 2)));
             }
@@ -96,13 +98,15 @@ public class PairService extends BaseService {
 
     /**
      * 获取没有打过标签的pair
+     *
      * @param page
      * @param size
      * @return
      */
-    public Page<Pair> getUntagedPairs(Integer page, Integer size){
-        return repository.findUntagedPairs(PageRequest.of(page-1,size,SORT_ID_DESC));
+    public Page<Pair> getUntagedPairs(Integer page, Integer size) {
+        return repository.findUntagedPairs(PageRequest.of(page - 1, size, SORT_ID_DESC));
     }
+
     /**
      * 删除指定对象
      *
@@ -126,5 +130,24 @@ public class PairService extends BaseService {
         Pair pair = repository.getOne(id);
         pair.setRelation(new Relation(relationId));
         repository.save(pair);
+    }
+
+    /**
+     * 导出所有对象
+     *
+     * @return
+     */
+    public byte[] export() {
+        List<Pair> pairs = repository.findAll(SORT_ID_DESC);
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (Pair pair : pairs) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put(columnForExport[0], pair.getKnowledgeA());
+            obj.put(columnForExport[1], pair.getKnowledgeB());
+            obj.put(columnForExport[2], pair.getRelation().getName());
+            obj.put(columnForExport[2], pair.getRelation().getCode());
+            data.add(obj);
+        }
+        return export(columnForExport, data);
     }
 }

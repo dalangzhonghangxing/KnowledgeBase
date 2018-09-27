@@ -65,4 +65,12 @@ public class SentenceController extends BaseController {
         service.save(id, toSaveMap);
     }
 
+    /**
+     * 导出所有对象
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/export", method = RequestMethod.GET)
+    public byte[] export(){
+        return service.export();
+    }
 }

@@ -3,16 +3,14 @@ package edu.ecnu.kb.service;
 import edu.ecnu.kb.model.Knowledge;
 import edu.ecnu.kb.model.Relation;
 import edu.ecnu.kb.model.RelationRepository;
-import edu.ecnu.kb.model.Sentence;
-import edu.ecnu.kb.service.upload.KnowledgeRowProcessor;
 import edu.ecnu.kb.service.upload.RelationRowProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +21,8 @@ public class RelationService extends BaseService {
 
     @Autowired
     private RelationRowProcessor rowProcessor;
+
+    private static final String[] columnForExport = {"code", "name", "example"};
 
     public Map<String, Object> upload(InputStream file, String tag) {
         List<Knowledge> knowledges = new ArrayList<>();
@@ -46,5 +46,23 @@ public class RelationService extends BaseService {
             relation = new Relation();
         setNewValue(Relation.class, relation, toSaveMap);
         repository.save(relation);
+    }
+
+    /**
+     * 导出所有对象
+     *
+     * @return
+     */
+    public byte[] export() {
+        List<Relation> relations = repository.findAll(SORT_ID_DESC);
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (Relation relation : relations) {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put(columnForExport[0], relation.getCode());
+            obj.put(columnForExport[1], relation.getName());
+            obj.put(columnForExport[2], relation.getExample());
+            data.add(obj);
+        }
+        return export(columnForExport, data);
     }
 }

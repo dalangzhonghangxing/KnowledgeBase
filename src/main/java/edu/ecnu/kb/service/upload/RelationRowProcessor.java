@@ -8,8 +8,9 @@ public class RelationRowProcessor implements RowProcessor {
     @Override
     public Object processor(String[] line) {
         Relation relation = new Relation();
-        relation.setName(line[0]);
-        relation.setExample(line[1]);
+        relation.setCode(line[0]);
+        relation.setName(line[1]);
+        relation.setExample(line[2]);
         return relation;
     }
 }
