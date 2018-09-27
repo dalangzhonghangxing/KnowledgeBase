@@ -24,6 +24,11 @@ public class Relation extends BaseModel {
     @Column(columnDefinition = "text")
     private String example;
 
+    // 编号，模型训练的时候使用该编号来表示关系
+    // 使用该字段的主要原因是方便与之前的工作兼容
+    @Column(unique = true)
+    private String code;
+
     public Relation() {
 
     }

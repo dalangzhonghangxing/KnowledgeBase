@@ -29,4 +29,8 @@ public class Sentence extends BaseModel {
             sb.append(word).append(" ");
         this.splited = sb.subSequence(0, sb.length() - 1).toString();
     }
+
+    public void setSplited(String splited){
+        this.splited = splited;
+    }
 }
