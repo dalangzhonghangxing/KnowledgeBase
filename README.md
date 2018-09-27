@@ -11,6 +11,7 @@
     + w2v(默认模型，根据已有句子训练)
     + position embedding
     + POS
+    + test
 
 
 ## 注意
