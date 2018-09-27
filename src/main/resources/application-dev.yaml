@@ -54,7 +54,6 @@ spring:
         open-in-view: true
     session:
         store-type: None
-
 ecnu:
     kb:
         filesystem: ../../file

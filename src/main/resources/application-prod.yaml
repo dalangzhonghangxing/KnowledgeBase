@@ -61,3 +61,6 @@ spring:
         timeout: '3000000'
     session:
         store-type: redis
+ecnu:
+    kb:
+        filesystem: ../../file
