@@ -19,10 +19,10 @@ import java.util.List;
  * 分词工具类
  */
 @Component
-public class SplitWordUtils {
+public class SplitWordUtil {
 
     private static final Logger LOG = LoggerFactory
-            .getLogger(SplitWordUtils.class);
+            .getLogger(SplitWordUtil.class);
 
     private static final JiebaSegmenter JIEBA_SEGMENTER = new JiebaSegmenter();
 

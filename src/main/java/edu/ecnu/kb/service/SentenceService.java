@@ -4,7 +4,7 @@ import edu.ecnu.kb.model.Sentence;
 import edu.ecnu.kb.model.SentenceRepository;
 import edu.ecnu.kb.service.upload.SentenceRowProcessor;
 import edu.ecnu.kb.service.util.SessionUtil;
-import edu.ecnu.kb.service.util.SplitWordUtils;
+import edu.ecnu.kb.service.util.SplitWordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -73,7 +73,7 @@ public class SentenceService extends BaseService {
 
         int index = 0;
         for (Sentence sentence : sentences) {
-            sentence.setSplited(SplitWordUtils.split(sentence.getOriginal()));
+            sentence.setSplited(SplitWordUtil.split(sentence.getOriginal()));
             SessionUtil.setProgress(tag, 10, index++, sentences.size(), 85);
         }
 
@@ -96,7 +96,7 @@ public class SentenceService extends BaseService {
         setNewValue(Sentence.class, sentence, toSaveMap);
 
         // 重新分词
-        sentence.setSplited(SplitWordUtils.split(sentence.getOriginal()));
+        sentence.setSplited(SplitWordUtil.split(sentence.getOriginal()));
         repository.save(sentence);
     }
 

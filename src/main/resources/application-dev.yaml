@@ -57,3 +57,4 @@ spring:
 ecnu:
     kb:
         filesystem: ../../file
+        python-project-path: ~/PycharmProjects/Test
