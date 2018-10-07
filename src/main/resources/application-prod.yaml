@@ -65,3 +65,4 @@ ecnu:
     kb:
         filesystem: ../../file
         python-project-path: ~/PycharmProjects/Test
+        dataset-path: ~/dataset/labeledSentence.txt

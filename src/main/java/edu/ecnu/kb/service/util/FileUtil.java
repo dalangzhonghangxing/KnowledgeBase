@@ -17,7 +17,7 @@ import java.util.List;
 public class FileUtil {
 
     @Value("${ecnu.kb.filesystem}")
-    protected String PATH="/Users/hang/test/";
+    protected String PATH;
 
     private static File PIC_SUBDIR;
 

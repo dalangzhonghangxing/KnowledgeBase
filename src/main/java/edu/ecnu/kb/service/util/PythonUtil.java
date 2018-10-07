@@ -18,7 +18,7 @@ public class PythonUtil {
             .getLogger(PythonUtil.class);
 
     @Value("${ecnu.kb.python-project-path}")
-    private static String projectPath = "/Users/hang/PycharmProjects/Test/";
+    private static String projectPath;
 
     /**
      * 执行python脚本。

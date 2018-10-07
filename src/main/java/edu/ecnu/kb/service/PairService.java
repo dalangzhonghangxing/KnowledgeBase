@@ -3,6 +3,7 @@ package edu.ecnu.kb.service;
 import edu.ecnu.kb.model.*;
 import edu.ecnu.kb.service.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,9 @@ import java.util.*;
 
 @Service
 public class PairService extends BaseService {
+
+    @Value("${ecnu.kb.dataset-path}")
+    private String datasetPath;
 
     @Autowired
     private SentenceRepository sentenceRepository;
@@ -154,5 +158,15 @@ public class PairService extends BaseService {
             data.add(obj);
         }
         return export(columnForExport, data);
+    }
+
+    /**
+     * 生成
+     * @return
+     */
+    public Map<String,Object> generateDataset(){
+//        datasetPath
+        //TODO:将句子保存到指定文件
+        return null;
     }
 }
