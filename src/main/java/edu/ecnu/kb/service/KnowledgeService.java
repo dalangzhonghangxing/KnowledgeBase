@@ -5,6 +5,7 @@ import edu.ecnu.kb.model.KnowledgeRepository;
 import edu.ecnu.kb.service.upload.KnowledgeRowProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -22,6 +23,8 @@ public class KnowledgeService extends BaseService {
     @Autowired
     private KnowledgeRowProcessor rowProcessor;
 
+    private final static Sort SORT_NAME_ASC = new Sort(Sort.Direction.ASC, "name");
+
     private static final String[] columnForExport = {"name"};
 
     /**
@@ -37,7 +40,7 @@ public class KnowledgeService extends BaseService {
     }
 
     public Page<Knowledge> getByPage(Integer page, Integer size) {
-        return getByPage(page, size, repository);
+        return getByPage(page, size, repository,SORT_NAME_ASC);
     }
 
     public Page<Knowledge> delete(Long id, Integer page, Integer size) {

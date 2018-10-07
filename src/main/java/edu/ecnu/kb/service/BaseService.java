@@ -89,15 +89,19 @@ public class BaseService {
     }
 
     /**
-     * 分页获取对象
+     * 分页获取对象,按照id逆序排序
      *
-     * @param page
-     * @param size
-     * @param repository
-     * @return
      */
     public Page getByPage(Integer page, Integer size, JpaRepository repository) {
         return repository.findAll(PageRequest.of(page - 1, size, SORT_ID_DESC));
+    }
+
+    /**
+     * 分页获取对象,按照id逆序排序。自定义排序方式
+     *
+     */
+    public Page getByPage(Integer page, Integer size, JpaRepository repository,Sort sort) {
+        return repository.findAll(PageRequest.of(page - 1, size, sort));
     }
 
     /**
