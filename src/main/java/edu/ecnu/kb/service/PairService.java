@@ -142,10 +142,15 @@ public class PairService extends BaseService {
         List<Map<String, Object>> data = new ArrayList<>();
         for (Pair pair : pairs) {
             Map<String, Object> obj = new HashMap<>();
-            obj.put(columnForExport[0], pair.getKnowledgeA());
-            obj.put(columnForExport[1], pair.getKnowledgeB());
-            obj.put(columnForExport[2], pair.getRelation().getName());
-            obj.put(columnForExport[2], pair.getRelation().getCode());
+            obj.put(columnForExport[0], pair.getKnowledgeA().getName());
+            obj.put(columnForExport[1], pair.getKnowledgeB().getName());
+            if(pair.getRelation() != null) {
+                obj.put(columnForExport[2], pair.getRelation().getName());
+                obj.put(columnForExport[3], pair.getRelation().getCode());
+            }else{
+                obj.put(columnForExport[2], "");
+                obj.put(columnForExport[3], "");
+            }
             data.add(obj);
         }
         return export(columnForExport, data);
