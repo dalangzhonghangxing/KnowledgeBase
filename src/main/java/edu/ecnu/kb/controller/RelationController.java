@@ -1,8 +1,6 @@
 package edu.ecnu.kb.controller;
 
 import edu.ecnu.kb.model.Relation;
-import edu.ecnu.kb.model.Sentence;
-import edu.ecnu.kb.service.BaseService;
 import edu.ecnu.kb.service.RelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

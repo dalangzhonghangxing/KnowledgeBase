@@ -27,3 +27,7 @@ hs_err_pid*
 .idea
 target
 log
+
+# python
+*.pkl
+mnist
