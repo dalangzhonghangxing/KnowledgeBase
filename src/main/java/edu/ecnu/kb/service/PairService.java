@@ -54,8 +54,10 @@ public class PairService extends BaseService {
         // 为每句句子分词后的单词生一个wordset，从而提高查询性能
         List<Set<String>> wordSets = new ArrayList<>();
         for (Sentence sentence : sentences) {
-            Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split(" ")));
-            wordSets.add(wordSet);
+            if(sentence.getSplited() != null ) {
+                Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split(" ")));
+                wordSets.add(wordSet);
+            }
         }
         SessionUtil.set(tag, 15);
 
