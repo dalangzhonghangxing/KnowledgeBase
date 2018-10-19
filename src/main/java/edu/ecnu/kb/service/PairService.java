@@ -1,6 +1,7 @@
 package edu.ecnu.kb.service;
 
 import edu.ecnu.kb.model.*;
+import edu.ecnu.kb.service.util.FileUtil;
 import edu.ecnu.kb.service.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -148,10 +149,10 @@ public class PairService extends BaseService {
             Map<String, Object> obj = new HashMap<>();
             obj.put(columnForExport[0], pair.getKnowledgeA().getName());
             obj.put(columnForExport[1], pair.getKnowledgeB().getName());
-            if(pair.getRelation() != null) {
+            if (pair.getRelation() != null) {
                 obj.put(columnForExport[2], pair.getRelation().getName());
                 obj.put(columnForExport[3], pair.getRelation().getCode());
-            }else{
+            } else {
                 obj.put(columnForExport[2], "");
                 obj.put(columnForExport[3], "");
             }
@@ -161,12 +162,32 @@ public class PairService extends BaseService {
     }
 
     /**
-     * 生成
-     * @return
+     * 生成数据集，只生成已标注的关系对。
+     * <p>
+     * 数据集格式为 原句 knowledgeA knowledgeB relationName relationCode\n
+     *
+     * @return 生成的数据集数量
      */
-    public Map<String,Object> generateDataset(){
-//        datasetPath
-        //TODO:将句子保存到指定文件
-        return null;
+    public Map<String, Object> generateDataset() {
+        List<Pair> tagedPairs = repository.findTagedPairs();
+        StringBuilder content = new StringBuilder();
+        int size = 0;
+
+        for (Pair tagedPair : tagedPairs) {
+            for (Sentence sentence : tagedPair.getSentences()) {
+                content.append(sentence.getOriginal()).append(" ")
+                        .append(tagedPair.getKnowledgeA().getName()).append(" ")
+                        .append(tagedPair.getKnowledgeB().getName()).append(" ")
+                        .append(tagedPair.getRelation().getName()).append(" ")
+                        .append(tagedPair.getRelation().getCode()).append("\n");
+                size++;
+            }
+        }
+
+        FileUtil.overrideFile(datasetPath, content.toString());
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("size", size);
+        return res;
     }
 }

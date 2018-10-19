@@ -1,14 +1,16 @@
 package edu.ecnu.kb.service.util;
 
 import edu.ecnu.kb.exception.BusinessException;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * 文件操作工具类
@@ -16,8 +18,11 @@ import java.util.List;
 @Service
 public class FileUtil {
 
+    private static final Logger LOG = LoggerFactory
+            .getLogger(FileUtil.class);
+
     @Value("${ecnu.kb.filesystem}")
-    protected String PATH;
+    private String PATH;
 
     private static File PIC_SUBDIR;
 
@@ -122,4 +127,48 @@ public class FileUtil {
         return dir.listFiles();
     }
 
+    /**
+     * 覆盖文件，如果文件不存在会新建。
+     *
+     * @param filePath 文件路径
+     * @param content  文件内容
+     */
+    public static void overrideFile(String filePath, String content) {
+        writeFile(filePath, content, false);
+    }
+
+    /**
+     * 追加文件，如果文件不存在会新建。
+     *
+     * @param filePath 文件路径
+     * @param content  要追加的内容
+     */
+    public static void appendFile(String filePath, String content) {
+        writeFile(filePath, content, true);
+    }
+
+    /**
+     * 覆盖制定文件。
+     *
+     * @param filePath 文件路径
+     * @param content  文件内容
+     * @param append   是否追加
+     */
+    private static void writeFile(String filePath, String content, boolean append) {
+        File file = new File(filePath);
+
+        if (!file.getParentFile().exists())
+            file.getParentFile().mkdirs();
+        try {
+            if (!file.exists())
+                file.createNewFile();
+
+            BufferedWriter out = new BufferedWriter(new FileWriter(file, append));
+            out.write(content);
+            out.close();
+        } catch (IOException e) {
+            LOG.error("写文件异常：" + filePath + "\t" + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

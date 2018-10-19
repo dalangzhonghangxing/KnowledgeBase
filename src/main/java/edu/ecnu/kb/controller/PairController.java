@@ -77,10 +77,17 @@ public class PairController extends BaseController {
 
     /**
      * 导出所有对象
-     * @return
      */
     @RequestMapping(value = BASE_API + "/export", method = RequestMethod.GET)
-    public byte[] export(){
+    public byte[] export() {
         return service.export();
+    }
+
+    /**
+     * 生成数据集
+     */
+    @RequestMapping(value = BASE_API + "/generate-dataset", method = RequestMethod.POST)
+    public Map<String, Object> generateDataset() {
+        return service.generateDataset();
     }
 }
