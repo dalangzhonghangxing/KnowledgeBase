@@ -35,6 +35,10 @@ public class Pair extends BaseModel {
     @ManyToMany
     private Set<Sentence> sentences = new HashSet<>();
 
+    // 根据该字段来排序，实现多人同时打标签
+    @Column(columnDefinition="int default 0")
+    private int seq=0;
+
     @Override
     public boolean equals(Object other) {
         if (other instanceof Pair) {

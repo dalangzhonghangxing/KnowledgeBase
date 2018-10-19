@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,6 +26,8 @@ public class PairService extends BaseService {
 
     @Autowired
     private PairRepository repository;
+
+    private static final Sort SORT_SEQ_ASC = new Sort(Sort.Direction.ASC, "seq");
 
     private static final String[] columnForExport = {"knowledgeA", "knowledgeB", "relationName", "relationCode"};
 
@@ -55,7 +58,7 @@ public class PairService extends BaseService {
         // 为每句句子分词后的单词生一个wordset，从而提高查询性能
         List<Set<String>> wordSets = new ArrayList<>();
         for (Sentence sentence : sentences) {
-            if(sentence.getSplited() != null ) {
+            if (sentence.getSplited() != null) {
                 Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split(" ")));
                 wordSets.add(wordSet);
             }
@@ -104,14 +107,19 @@ public class PairService extends BaseService {
     }
 
     /**
-     * 获取没有打过标签的pair
+     * 获取没有打过标签的pair，根据seq排序，获取之后将seq+1。
      *
      * @param page
      * @param size
      * @return
      */
     public Page<Pair> getUntagedPairs(Integer page, Integer size) {
-        return repository.findUntagedPairs(PageRequest.of(page - 1, size, SORT_ID_DESC));
+        Page<Pair> res = repository.findUntagedPairs(PageRequest.of(page - 1, size, SORT_SEQ_ASC));
+        List<Pair> pairs = res.getContent();
+        for (Pair pair : pairs)
+            pair.setSeq(pair.getSeq() + 1);
+        repository.saveAll(pairs);
+        return res;
     }
 
     /**
