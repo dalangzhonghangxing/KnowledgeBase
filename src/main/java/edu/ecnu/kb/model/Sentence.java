@@ -27,7 +27,8 @@ public class Sentence extends BaseModel {
         StringBuffer sb = new StringBuffer();
         for (String word : words)
             sb.append(word).append(" ");
-        this.splited = sb.subSequence(0, sb.length() - 1).toString();
+        if(sb.length()>0)
+            this.splited = sb.subSequence(0, sb.length() - 1).toString();
     }
 
     public void setSplited(String splited){
