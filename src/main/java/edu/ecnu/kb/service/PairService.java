@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -61,9 +62,10 @@ public class PairService extends BaseService {
         List<Set<String>> wordSets = new ArrayList<>();
         for (Sentence sentence : sentences) {
             if (sentence.getSplited() != null) {
-                Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split(" ")));
+                Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split("\\s+")));
                 wordSets.add(wordSet);
-            }
+            }else
+                wordSets.add(new HashSet<>());
         }
         SessionUtil.set(tag, 15);
 
@@ -75,9 +77,16 @@ public class PairService extends BaseService {
                 Knowledge[] currentPair = {knowledges.get(i), knowledges.get(j)};
                 if (existedPairs.contains(currentPair))
                     continue;
-                Pair newPair = new Pair();
-                newPair.setKnowledgeA(knowledges.get(i));
-                newPair.setKnowledgeB(knowledges.get(j));
+                // 先查询数据库中是否存在该知识对，如果不存在则新增，如果存在则判断句子是否都合法。
+                Pair newPair = repository.findByKnowledgeAAndKnowledgeB(knowledges.get(i), knowledges.get(j));
+                if (newPair == null) {
+                    newPair = new Pair();
+                    newPair.setKnowledgeA(knowledges.get(i));
+                    newPair.setKnowledgeB(knowledges.get(j));
+                } else {
+                    // 如果pair已存在，检查已有句子是否合法。
+                    newPair = checkSentence(newPair);
+                }
                 for (int k = 0; k < wordSets.size(); k++) {
                     if (wordSets.get(k).contains(newPair.getKnowledgeA().getName())
                             && wordSets.get(k).contains(newPair.getKnowledgeB().getName())) {
@@ -95,6 +104,35 @@ public class PairService extends BaseService {
         Map<String, Object> res = new HashMap<>();
         res.put("size", newPairs.size());
         return res;
+    }
+
+    /**
+     * 检查pair的句子是否合法。
+     * <p>
+     * 如果不合法，则将句子删除。如果句子的数量为0，则将这个知识点删除，并返回一个新的对象。
+     *
+     * @param pair
+     * @return
+     */
+    @Transactional
+    public Pair checkSentence(Pair pair) {
+        Set validedSentence = new HashSet();
+        for (Sentence sentence : pair.getSentences()) {
+            Set set = new HashSet<>(Arrays.asList(sentence.getSplited().split("\\s+")));
+            if (set.contains(pair.getKnowledgeA().getName()) &&
+                    set.contains(pair.getKnowledgeB().getName()))
+                validedSentence.add(sentence);
+        }
+        if (validedSentence.size() == 0) {
+            Pair newPair = new Pair();
+            newPair.setKnowledgeA(pair.getKnowledgeA());
+            newPair.setKnowledgeB(pair.getKnowledgeB());
+            newPair.setRelation(pair.getRelation());
+            repository.delete(pair);
+            return newPair;
+        }
+        pair.setSentences(validedSentence);
+        return pair;
     }
 
     /**
@@ -119,7 +157,7 @@ public class PairService extends BaseService {
     public Page<Pair> getByPageWithCondition(Integer page, Integer size, String condition) {
         Pair pair = new Pair();
         for (Map.Entry<String, Object> entry : ((Map<String, Object>) JSON.parse(condition)).entrySet()) {
-            if(entry.getValue() == null || entry.getValue().equals(""))
+            if (entry.getValue() == null || entry.getValue().equals(""))
                 continue;
             if (entry.getKey().equals("knowledgeA")) {
                 pair.setKnowledgeA(knowledgeRepository.findByName(entry.getValue().toString()));
@@ -134,7 +172,7 @@ public class PairService extends BaseService {
                 .withIgnorePaths("id")
                 .withIgnorePaths("seq");
 
-        return repository.findAll(Example.of(pair,matcher), PageRequest.of(page - 1, size, SORT_ID_DESC));
+        return repository.findAll(Example.of(pair, matcher), PageRequest.of(page - 1, size, SORT_ID_DESC));
     }
 
     /**
