@@ -64,7 +64,7 @@ public class PairService extends BaseService {
             if (sentence.getSplited() != null) {
                 Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split("\\s+")));
                 wordSets.add(wordSet);
-            }else
+            } else
                 wordSets.add(new HashSet<>());
         }
         SessionUtil.set(tag, 15);
@@ -290,5 +290,9 @@ public class PairService extends BaseService {
         res.put("tagedCount", tagedCount);
         res.put("instanceCount", instanceCount);
         return res;
+    }
+
+    public Pair getById(long id) {
+        return repository.getOne(id);
     }
 }

@@ -77,6 +77,7 @@ public class RelationService extends BaseService {
             Map<String, Object> one = new HashMap<>();
             one.put("id", relation.getId());
             one.put("name", relation.getName());
+            one.put("example", relation.getExample());
             res.add(one);
         }
         return res;

@@ -36,7 +36,7 @@ public class PairController extends BaseController {
     @RequestMapping(value = BASE_API + "/page", method = RequestMethod.GET)
     public Page<Pair> getByPage(@RequestParam Integer page, @RequestParam Integer size,
                                 @RequestParam String condition) {
-        return service.getByPageWithCondition(page,size,condition);
+        return service.getByPageWithCondition(page, size, condition);
     }
 
     /**
@@ -100,5 +100,13 @@ public class PairController extends BaseController {
     @RequestMapping(value = BASE_API + "/generate-dataset", method = RequestMethod.POST)
     public Map<String, Object> generateDataset() {
         return service.generateDataset();
+    }
+
+    /**
+     * 根据Id查找Pair
+     */
+    @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.GET)
+    public Pair getById(@PathVariable long id) {
+        return service.getById(id);
     }
 }
