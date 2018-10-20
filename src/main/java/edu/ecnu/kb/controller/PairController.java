@@ -39,6 +39,15 @@ public class PairController extends BaseController {
     }
 
     /**
+     * 获取基本信息
+     * @return
+     */
+    @RequestMapping(value = BASE_API+"/info",method = RequestMethod.GET)
+    public Map<String,Object> getInfo(){
+        return service.getInfo();
+    }
+
+    /**
      * 打标签
      */
     @RequestMapping(value = BASE_API + "/{id}", method = RequestMethod.POST)

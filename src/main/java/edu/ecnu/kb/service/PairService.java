@@ -200,4 +200,26 @@ public class PairService extends BaseService {
         res.put("size", size);
         return res;
     }
+
+    /**
+     * 获取基本信息，包括  总数、已标记数量、实例数(同时包含两个实体的句子)
+     *
+     * @return
+     */
+    public Map<String, Object> getInfo() {
+        Map<String, Object> res = new HashMap<>();
+        long tagedCount = 0;
+        long instanceCount = 0;
+        List<Pair> pairs = repository.findAll();
+        long count = pairs.size();
+        for (Pair pair : pairs) {
+            if (pair.getRelation() != null)
+                tagedCount += 1;
+            instanceCount += pair.getSentences().size();
+        }
+        res.put("count", count);
+        res.put("tagedCount", tagedCount);
+        res.put("instanceCount", instanceCount);
+        return res;
+    }
 }

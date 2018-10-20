@@ -18,4 +18,7 @@ public interface PairRepository extends BaseRepository<Pair> {
 
     @Query("select  pair from Pair as pair where relation is not null")
     List<Pair> findTagedPairs();
+
+    @Query("select count(pair) from  Pair as pair where relation is not null")
+    long countTaged();
 }
