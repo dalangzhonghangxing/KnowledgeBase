@@ -65,4 +65,20 @@ public class RelationService extends BaseService {
         }
         return export(columnForExport, data);
     }
+
+    /**
+     * 获取所有关系
+     * @return
+     */
+    public List<Map<String, Object>> getAll() {
+        List<Map<String, Object>> res = new ArrayList<>();
+        List<Relation> relations = repository.findAll(SORT_ID_DESC);
+        for (Relation relation : relations) {
+            Map<String, Object> one = new HashMap<>();
+            one.put("id", relation.getId());
+            one.put("name", relation.getName());
+            res.add(one);
+        }
+        return res;
+    }
 }

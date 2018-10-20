@@ -7,4 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RepositoryRestResource(exported = false)
 public interface KnowledgeRepository extends BaseRepository<Knowledge> {
+
+    Knowledge findByName(String name);
 }

@@ -1,5 +1,6 @@
 package edu.ecnu.kb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  */
 @Data
 @MappedSuperclass
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public abstract class BaseModel implements Serializable {
     private static final long serialVersionUID = 188123671496376397L;
 

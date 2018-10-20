@@ -34,16 +34,18 @@ public class PairController extends BaseController {
      * @return
      */
     @RequestMapping(value = BASE_API + "/page", method = RequestMethod.GET)
-    public Page<Pair> getByPage(@RequestParam Integer page, @RequestParam Integer size) {
-        return service.getByPage(page, size);
+    public Page<Pair> getByPage(@RequestParam Integer page, @RequestParam Integer size,
+                                @RequestParam String condition) {
+        return service.getByPageWithCondition(page,size,condition);
     }
 
     /**
      * 获取基本信息
+     *
      * @return
      */
-    @RequestMapping(value = BASE_API+"/info",method = RequestMethod.GET)
-    public Map<String,Object> getInfo(){
+    @RequestMapping(value = BASE_API + "/info", method = RequestMethod.GET)
+    public Map<String, Object> getInfo() {
         return service.getInfo();
     }
 

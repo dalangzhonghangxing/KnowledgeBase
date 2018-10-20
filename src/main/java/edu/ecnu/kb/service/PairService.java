@@ -1,13 +1,12 @@
 package edu.ecnu.kb.service;
 
+import com.alibaba.fastjson.JSON;
 import edu.ecnu.kb.model.*;
 import edu.ecnu.kb.service.util.FileUtil;
 import edu.ecnu.kb.service.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,6 +25,9 @@ public class PairService extends BaseService {
 
     @Autowired
     private PairRepository repository;
+
+    @Autowired
+    private RelationRepository relationRepository;
 
     private static final Sort SORT_SEQ_ASC = new Sort(Sort.Direction.ASC, "seq");
 
@@ -104,6 +106,35 @@ public class PairService extends BaseService {
      */
     public Page<Pair> getByPage(Integer page, Integer size) {
         return getByPage(page, size, repository);
+    }
+
+    /**
+     * 带有条件的分页查询
+     *
+     * @param page
+     * @param size
+     * @param condition
+     * @return
+     */
+    public Page<Pair> getByPageWithCondition(Integer page, Integer size, String condition) {
+        Pair pair = new Pair();
+        for (Map.Entry<String, Object> entry : ((Map<String, Object>) JSON.parse(condition)).entrySet()) {
+            if(entry.getValue() == null || entry.getValue().equals(""))
+                continue;
+            if (entry.getKey().equals("knowledgeA")) {
+                pair.setKnowledgeA(knowledgeRepository.findByName(entry.getValue().toString()));
+            } else if (entry.getKey().equals("knowledgeB")) {
+                pair.setKnowledgeB(knowledgeRepository.findByName(entry.getValue().toString()));
+            } else if (entry.getKey().equals("relation")) {
+                pair.setRelation(relationRepository.getOne(Long.parseLong(entry.getValue().toString())));
+            }
+        }
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("id")
+                .withIgnorePaths("seq");
+
+        return repository.findAll(Example.of(pair,matcher), PageRequest.of(page - 1, size, SORT_ID_DESC));
     }
 
     /**

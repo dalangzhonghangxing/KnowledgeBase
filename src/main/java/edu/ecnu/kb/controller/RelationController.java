@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -53,5 +54,13 @@ public class RelationController extends BaseController {
     @RequestMapping(value = BASE_API + "/export", method = RequestMethod.GET)
     public byte[] export(){
         return service.export();
+    }
+
+    /**
+     * 获取所有关系
+     */
+    @RequestMapping(value = BASE_API + "/all", method = RequestMethod.GET)
+    public List<Map<String,Object>> getAll(){
+        return service.getAll();
     }
 }
