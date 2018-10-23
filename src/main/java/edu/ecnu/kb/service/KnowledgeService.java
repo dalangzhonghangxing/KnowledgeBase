@@ -128,14 +128,28 @@ public class KnowledgeService extends BaseService {
             edge.put("targetID", nodeB.get("id"));
             edge.put("size", 4);
             edge.put("r", pair.getRelation().getName());
+            setColor(edge,pair.getRelation().getName());
         } else {
             //逆关系，调整方向
             edge.put("targetID", nodeA.get("id"));
             edge.put("sourceID", nodeB.get("id"));
             edge.put("size", 4);
             edge.put("r", pair.getRelation().getInverseRelation().getName());
+            setColor(edge,pair.getRelation().getInverseRelation().getName());
         }
+
         edges.add(edge);
+    }
+
+    private void setColor(Map<String,Object> edge,String relationName){
+        switch(relationName){
+            case "依赖":edge.put("c", "red");break;
+            case "包含":edge.put("c", "green");break;
+            case "拥有":edge.put("c", "black");break;
+            case "同义":edge.put("c", "blue");break;
+            case "反义":edge.put("c", "blue");break;
+            default: edge.put("c", "black");
+        }
     }
 
     /**
