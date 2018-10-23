@@ -22,5 +22,8 @@ public interface PairRepository extends BaseRepository<Pair> {
     @Query("select count(pair) from  Pair as pair where relation is not null")
     long countTaged();
 
-    Pair findByKnowledgeAAndKnowledgeB(Knowledge knowledgeA,Knowledge knowledgeb);
+    Pair findByKnowledgeAAndKnowledgeB(Knowledge knowledgeA, Knowledge knowledgeb);
+
+    @Query("select pair from Pair as pair where knowledgeA=?1 or knowledgeB=?1")
+    List<Pair> findByKnowledge(Knowledge knowledge);
 }

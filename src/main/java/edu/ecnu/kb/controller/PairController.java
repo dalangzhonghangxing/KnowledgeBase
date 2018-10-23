@@ -109,4 +109,13 @@ public class PairController extends BaseController {
     public Pair getById(@PathVariable long id) {
         return service.getById(id);
     }
+
+
+    /**
+     * 根据id，获取pair的关系图
+     */
+    @RequestMapping(value = BASE_API + "/graph/{id}", method = RequestMethod.GET)
+    public Map<String, Object> getGraph(@PathVariable long id) {
+        return service.getGraph(id);
+    }
 }

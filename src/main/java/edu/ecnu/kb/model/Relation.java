@@ -2,10 +2,7 @@ package edu.ecnu.kb.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 /**
  * 关系类，记录关系与例子，方便用户理解该关系
@@ -28,6 +25,11 @@ public class Relation extends BaseModel {
     // 使用该字段的主要原因是方便与之前的工作兼容
     @Column(unique = true)
     private String code;
+
+    // 反关系，如果是正向的，则为null。
+    @OneToOne
+    @JoinColumn
+    private Relation inverseRelation;
 
     public Relation() {
 

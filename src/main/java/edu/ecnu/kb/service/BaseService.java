@@ -20,6 +20,7 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 用于抽象所有Service公共的方法，或者继承某个公共的工具类或实现某些公共的接口
@@ -93,7 +94,6 @@ public class BaseService {
 
     /**
      * 分页获取对象,按照id逆序排序
-     *
      */
     public Page getByPage(Integer page, Integer size, JpaRepository repository) {
         return repository.findAll(PageRequest.of(page - 1, size, SORT_ID_DESC));
@@ -101,9 +101,8 @@ public class BaseService {
 
     /**
      * 分页获取对象,按照id逆序排序。自定义排序方式
-     *
      */
-    public Page getByPage(Integer page, Integer size, JpaRepository repository,Sort sort) {
+    public Page getByPage(Integer page, Integer size, JpaRepository repository, Sort sort) {
         return repository.findAll(PageRequest.of(page - 1, size, sort));
     }
 
@@ -171,7 +170,7 @@ public class BaseService {
             out.write(title + content.toString());
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 out.close();
             } catch (IOException e) {
@@ -180,5 +179,19 @@ public class BaseService {
         }
 
         return outputStream.toByteArray();
+    }
+
+    /**
+     * 将两个关系图合并
+     */
+    public Map<String, Object> mergeGraphes(Map<String, Object> graph1, Map<String, Object> graph2) {
+        Set<Map<String, Object>> nodes1 = (Set<Map<String, Object>>) graph1.get("nodes");
+        Set<Map<String, Object>> nodes2 = (Set<Map<String, Object>>) graph2.get("nodes");
+        List<Map<String, Object>> edges1 = (List<Map<String, Object>>) graph1.get("edges");
+        List<Map<String, Object>> edges2 = (List<Map<String, Object>>) graph2.get("edges");
+        
+        nodes1.addAll(nodes2);
+        edges1.addAll(edges2);
+        return graph1;
     }
 }

@@ -44,6 +44,16 @@ public class RelationService extends BaseService {
             relation = repository.getOne(id);
         else
             relation = new Relation();
+
+        // 设置inverseRelation
+        String inverseRelationName = toSaveMap.remove("inverseRelation").toString();
+        if (inverseRelationName != null) {
+            Relation inverseRelation = repository.findByName(inverseRelationName);
+            relation.setInverseRelation(inverseRelation);
+        } else {
+            relation.setInverseRelation(null);
+        }
+
         setNewValue(Relation.class, relation, toSaveMap);
         repository.save(relation);
     }
@@ -68,6 +78,7 @@ public class RelationService extends BaseService {
 
     /**
      * 获取所有关系
+     *
      * @return
      */
     public List<Map<String, Object>> getAll() {

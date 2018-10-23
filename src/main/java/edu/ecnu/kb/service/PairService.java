@@ -30,6 +30,9 @@ public class PairService extends BaseService {
     @Autowired
     private RelationRepository relationRepository;
 
+    @Autowired
+    private KnowledgeService knowledgeService;
+
     private static final Sort SORT_SEQ_ASC = new Sort(Sort.Direction.ASC, "seq");
 
     private static final String[] columnForExport = {"knowledgeA", "knowledgeB", "relationName", "relationCode"};
@@ -295,4 +298,31 @@ public class PairService extends BaseService {
     public Pair getById(long id) {
         return repository.getOne(id);
     }
+
+    /**
+     * 获取指定pair的关系图。
+     * <p>
+     * 具体做法：
+     * <p>
+     * 1. 获取该piar的两个knowledge。
+     * <p>
+     * 2. 分别获取每个knowledge的one-hot关系图。
+     * <p>
+     * 3. 将两个关系图合并。
+     */
+    public Map<String, Object> getGraph(long id) {
+        Pair pair = repository.getOne(id);
+
+        Map<String, Object> graphA = knowledgeService.getGraph(pair.getKnowledgeA(),30);
+        Map<String, Object> graphB = knowledgeService.getGraph(pair.getKnowledgeB(),30);
+
+        Map<String, Object> res = mergeGraphes(graphA, graphB);
+        for (Map<String, Object> node : (HashSet<Map<String, Object>>) res.get("nodes")) {
+            node.put("x", Math.random() * 150);
+            node.put("y", Math.random() * 150);
+        }
+        return res;
+    }
+
+
 }

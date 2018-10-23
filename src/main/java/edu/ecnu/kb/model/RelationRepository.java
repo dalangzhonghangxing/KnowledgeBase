@@ -6,4 +6,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RepositoryRestResource(exported = false)
 public interface RelationRepository extends BaseRepository<Relation> {
+    Relation findByName(String inverseRelationName);
 }
