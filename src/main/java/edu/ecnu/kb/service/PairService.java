@@ -300,7 +300,7 @@ public class PairService extends BaseService {
     }
 
     /**
-     * 获取指定pair的关系图。
+     * 获取指定pair的关系图。两个主节点的颜色分别为绿色与蓝色，其它为红色
      * <p>
      * 具体做法：
      * <p>
@@ -313,13 +313,21 @@ public class PairService extends BaseService {
     public Map<String, Object> getGraph(long id) {
         Pair pair = repository.getOne(id);
 
-        Map<String, Object> graphA = knowledgeService.getGraph(pair.getKnowledgeA(),30);
-        Map<String, Object> graphB = knowledgeService.getGraph(pair.getKnowledgeB(),30);
+        Map<String, Object> graphA = knowledgeService.getGraph(pair.getKnowledgeA(), 30);
+        Map<String, Object> graphB = knowledgeService.getGraph(pair.getKnowledgeB(), 30);
 
         Map<String, Object> res = mergeGraphes(graphA, graphB);
         for (Map<String, Object> node : (HashSet<Map<String, Object>>) res.get("nodes")) {
-            node.put("x", Math.random() * 150);
-            node.put("y", Math.random() * 150);
+            node.put("x", Math.random() * 100);
+            node.put("y", Math.random() * 100);
+
+            if (node.get("id").equals(pair.getKnowledgeA().getId())) {
+                node.put("color", "green");
+            } else if (node.get("id").equals(pair.getKnowledgeB().getId())) {
+                node.put("color", "blue");
+            } else {
+                node.put("color", "red");
+            }
         }
         return res;
     }

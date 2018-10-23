@@ -85,11 +85,14 @@ public class KnowledgeService extends BaseService {
      */
     public Map<String, Object> getGraph(Knowledge knowledge, int nodeSize) {
         Map<String, Object> res = new HashMap<>();
-        res.put("nodes", new HashSet<Map<String, Object>>());
+        Set<Map<String, Object>> nodes = new HashSet<>();
+        res.put("nodes", nodes);
         res.put("edges", new ArrayList<>());
         List<Pair> pairs = pairRepository.findByKnowledge(knowledge);
         for (Pair pair : pairs)
             addPairToGraph(pair, res, nodeSize);
+        if(nodes.isEmpty())
+            nodes.add(getNode(knowledge,nodeSize));
         return res;
     }
 
