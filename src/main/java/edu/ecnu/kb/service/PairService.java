@@ -332,5 +332,38 @@ public class PairService extends BaseService {
         return res;
     }
 
+    /**
+     * 获取整个知识体系的关系图。
+     * <p>
+     * 1. 获取所有的pair，将边与相关node加进去。
+     * <p>
+     * 2. 获取所有的node，再加进去。避免遗漏孤立节点。
+     */
+    public Map<String, Object> getGraph() {
+        Map<String, Object> res = new HashMap<>();
+        Set<Map<String, Object>> nodes = new HashSet<>();
+        List<Map<String, Object>> edge = new ArrayList<>();
+        res.put("nodes", nodes);
+        res.put("edges", edge);
+
+        // 将所有的边与相关节点放入图中
+        List<Pair> pairs = repository.findAll();
+        for (Pair pair : pairs) {
+            knowledgeService.addPairToGraph(pair, res, 50);
+        }
+
+        // 将所有的节点放入nodes中
+        List<Knowledge> knowledges = knowledgeRepository.findAll();
+        for (Knowledge knowledge : knowledges) {
+            nodes.add(knowledgeService.getNode(knowledge, 50));
+        }
+
+        // 给每个节点设置位置
+        for (Map<String, Object> node : (HashSet<Map<String, Object>>) res.get("nodes")) {
+            node.put("x", Math.random() * 100);
+            node.put("y", Math.random() * 100);
+        }
+        return res;
+    }
 
 }

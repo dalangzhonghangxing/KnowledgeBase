@@ -107,7 +107,7 @@ public class KnowledgeService extends BaseService {
      * @param pair
      * @param graph
      */
-    private void addPairToGraph(Pair pair, Map<String, Object> graph, int nodeSize) {
+    public void addPairToGraph(Pair pair, Map<String, Object> graph, int nodeSize) {
         if (pair.getRelation() == null
                 || pair.getRelation().getName().equals("无关")
                 || pair.getRelation().getName().equals("待定"))
@@ -158,7 +158,7 @@ public class KnowledgeService extends BaseService {
      * @param knowledge
      * @return
      */
-    private Map<String, Object> getNode(Knowledge knowledge, int nodeSize) {
+    public Map<String, Object> getNode(Knowledge knowledge, int nodeSize) {
         Map<String, Object> node = new HashMap<>();
         node.put("label", knowledge.getName());
         node.put("id", knowledge.getId());
