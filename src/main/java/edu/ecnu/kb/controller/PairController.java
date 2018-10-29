@@ -6,7 +6,9 @@ import edu.ecnu.kb.service.PairService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -124,5 +126,15 @@ public class PairController extends BaseController {
     @RequestMapping(value = BASE_API + "/graph", method = RequestMethod.GET)
     public Map<String, Object> getGraph() {
         return service.getGraph();
+    }
+
+    @RequestMapping(value = BASE_API + "/upload", method = RequestMethod.POST)
+    public Map<String, Object> upload(MultipartHttpServletRequest req) {
+        try {
+            return service.upload(req.getFile("file").getInputStream(), req.getParameter("tag"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

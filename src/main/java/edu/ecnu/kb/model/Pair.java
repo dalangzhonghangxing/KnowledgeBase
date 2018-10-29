@@ -13,7 +13,7 @@ import java.util.Set;
  */
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {
-        "knowledge_a", "knowledge_b", "relation"}))
+        "knowledge_a", "knowledge_b"}))
 @Data
 public class Pair extends BaseModel {
     // 知识点A

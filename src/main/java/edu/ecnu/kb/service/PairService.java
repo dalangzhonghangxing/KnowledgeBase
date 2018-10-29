@@ -2,6 +2,7 @@ package edu.ecnu.kb.service;
 
 import com.alibaba.fastjson.JSON;
 import edu.ecnu.kb.model.*;
+import edu.ecnu.kb.service.upload.PairRowProcessor;
 import edu.ecnu.kb.service.util.FileUtil;
 import edu.ecnu.kb.service.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -33,9 +35,12 @@ public class PairService extends BaseService {
     @Autowired
     private KnowledgeService knowledgeService;
 
+    @Autowired
+    private PairRowProcessor rowProcessor;
+
     private static final Sort SORT_SEQ_ASC = new Sort(Sort.Direction.ASC, "seq");
 
-    private static final String[] columnForExport = {"knowledgeA", "knowledgeB", "relationName", "relationCode"};
+    private static final String[] columnForExport = {"knowledgeA", "knowledgeB", "relationCode", "relationName"};
 
     /**
      * 生成关系对，返回新生成的数量。
@@ -232,8 +237,8 @@ public class PairService extends BaseService {
             obj.put(columnForExport[0], pair.getKnowledgeA().getName());
             obj.put(columnForExport[1], pair.getKnowledgeB().getName());
             if (pair.getRelation() != null) {
-                obj.put(columnForExport[2], pair.getRelation().getName());
-                obj.put(columnForExport[3], pair.getRelation().getCode());
+                obj.put(columnForExport[2], pair.getRelation().getCode());
+                obj.put(columnForExport[3], pair.getRelation().getName());
             } else {
                 obj.put(columnForExport[2], "");
                 obj.put(columnForExport[3], "");
@@ -280,16 +285,9 @@ public class PairService extends BaseService {
      */
     public Map<String, Object> getInfo() {
         Map<String, Object> res = new HashMap<>();
-        long tagedCount = 0;
-        long instanceCount = 0;
-        List<Pair> pairs = repository.findAll();
-        long count = pairs.size();
-        for (Pair pair : pairs) {
-            if (pair.getRelation() != null)
-                tagedCount += 1;
-            instanceCount += pair.getSentences().size();
-        }
-        res.put("count", count);
+        long tagedCount = repository.findTagedCount();
+        long instanceCount = repository.findInstanceCount();
+        res.put("count", repository.count());
         res.put("tagedCount", tagedCount);
         res.put("instanceCount", instanceCount);
         return res;
@@ -364,6 +362,18 @@ public class PairService extends BaseService {
             node.put("y", Math.random() * 100);
         }
         return res;
+    }
+
+    /**
+     * 上传
+     *
+     * @param file
+     * @param tag
+     * @return
+     */
+    public Map<String, Object> upload(InputStream file, String tag) {
+        List<Pair> pairs = new ArrayList<>();
+        return uploadProcess(file, rowProcessor, tag, pairs, repository);
     }
 
 }

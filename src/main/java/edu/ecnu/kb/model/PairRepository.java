@@ -26,4 +26,12 @@ public interface PairRepository extends BaseRepository<Pair> {
 
     @Query("select pair from Pair as pair where knowledgeA=?1 or knowledgeB=?1")
     List<Pair> findByKnowledge(Knowledge knowledge);
+
+    @Query(value = "select count(*) from pair left join pair_sentences on pair.id = pair_sentences.pair_id",
+            nativeQuery = true)
+    long findInstanceCount();
+
+    @Query(value = "select count(*) from pair where relation is not null",
+            nativeQuery = true)
+    long findTagedCount();
 }
