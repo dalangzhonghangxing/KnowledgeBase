@@ -23,7 +23,7 @@ public class SentenceService extends BaseService {
     @Autowired
     private SentenceRepository repository;
 
-    private static final String[] columnForExport = {"original", "splited"};
+    private static final String[] columnForExport = {"original"};
 
     /**
      * 上传Sentence，返回上传成功的数量
@@ -111,7 +111,6 @@ public class SentenceService extends BaseService {
         for (Sentence sentence : sentences) {
             Map<String, Object> obj = new HashMap<>();
             obj.put(columnForExport[0], sentence.getOriginal());
-            obj.put(columnForExport[1], sentence.getSplited());
             data.add(obj);
         }
         return export(columnForExport, data);

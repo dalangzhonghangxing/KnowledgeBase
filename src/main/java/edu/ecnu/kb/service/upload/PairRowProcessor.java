@@ -25,7 +25,11 @@ public class PairRowProcessor implements RowProcessor {
             return null;
         Knowledge knowledgeA = getKnowledgeByName(line[0]);
         Knowledge knowledgeB = getKnowledgeByName(line[1]);
-        Relation relation = getRelation(line[2], line[3]);
+        Relation relation;
+        if (line.length > 3)
+            relation = getRelation(line[2], line[3]);
+        else
+            relation = getRelation(line[2], null);
         Pair pair = new Pair();
         pair.setRelation(relation);
         pair.setKnowledgeB(knowledgeB);
