@@ -57,5 +57,5 @@ spring:
 ecnu:
     kb:
         filesystem: ../../file
-        python-project-path: ~/PycharmProjects/Test/
-        dataset-path: ~/dataset/labeledSentence.txt
+        python-project-path: /Users/hang/PycharmProjects/Test/
+        dataset-path: /Users/hang/PycharmProjects/Test/generatedBySystem.txt

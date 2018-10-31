@@ -64,5 +64,6 @@ spring:
 ecnu:
     kb:
         filesystem: ../../file
-        python-project-path: ~/PycharmProjects/Test
-        dataset-path: ~/dataset/labeledSentence.txt
+        python-project-path: /home/hang/PycharmProjects/ykyl/experiment_enviroment/sentenceLevel
+        dataset-path: /home/hang/PycharmProjects/ykyl/experiment_enviroment/sentenceLevelData/generatedBySystem.txt
+

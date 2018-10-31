@@ -124,8 +124,8 @@ public class PairController extends BaseController {
      * 获取整个知识体系的关系图
      */
     @RequestMapping(value = BASE_API + "/graph", method = RequestMethod.GET)
-    public Map<String, Object> getGraph() {
-        return service.getGraph();
+    public Map<String, Object> getGraph(@RequestParam Long[] relationIds) {
+        return service.getGraph(relationIds);
     }
 
     @RequestMapping(value = BASE_API + "/upload", method = RequestMethod.POST)

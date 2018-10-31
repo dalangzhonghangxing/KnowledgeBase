@@ -251,7 +251,7 @@ public class PairService extends BaseService {
     /**
      * 生成数据集，只生成已标注的关系对。
      * <p>
-     * 数据集格式为 原句 knowledgeA knowledgeB relationName relationCode\n
+     * 数据集格式为 原句 knowledgeA knowledgeB relationCode relationName\n
      *
      * @return 生成的数据集数量
      */
@@ -265,13 +265,13 @@ public class PairService extends BaseService {
                 content.append(sentence.getOriginal()).append(" ")
                         .append(tagedPair.getKnowledgeA().getName()).append(" ")
                         .append(tagedPair.getKnowledgeB().getName()).append(" ")
-                        .append(tagedPair.getRelation().getName()).append(" ")
-                        .append(tagedPair.getRelation().getCode()).append("\n");
+                        .append(tagedPair.getRelation().getCode()).append(" ")
+                        .append(tagedPair.getRelation().getName()).append("\n");
                 size++;
             }
         }
 
-        FileUtil.overrideFile(datasetPath, content.toString());
+        FileUtil.overrideFile(datasetPath, content.substring(0, content.length() - 1));
 
         Map<String, Object> res = new HashMap<>();
         res.put("size", size);
@@ -290,6 +290,7 @@ public class PairService extends BaseService {
         res.put("count", repository.count());
         res.put("tagedCount", tagedCount);
         res.put("instanceCount", instanceCount);
+        res.put("tagedInstanceCount", repository.findTagedInstanceCount());
         return res;
     }
 
@@ -331,13 +332,13 @@ public class PairService extends BaseService {
     }
 
     /**
-     * 获取整个知识体系的关系图。
+     * 获取整个知识体系的关系图。由于边数太多，需要指定关系类别。
      * <p>
      * 1. 获取所有的pair，将边与相关node加进去。
      * <p>
      * 2. 获取所有的node，再加进去。避免遗漏孤立节点。
      */
-    public Map<String, Object> getGraph() {
+    public Map<String, Object> getGraph(Long[] relationIds) {
         Map<String, Object> res = new HashMap<>();
         Set<Map<String, Object>> nodes = new HashSet<>();
         List<Map<String, Object>> edge = new ArrayList<>();
@@ -345,16 +346,16 @@ public class PairService extends BaseService {
         res.put("edges", edge);
 
         // 将所有的边与相关节点放入图中
-        List<Pair> pairs = repository.findAll();
+        List<Pair> pairs = repository.findAllByRelationId(relationIds);
         for (Pair pair : pairs) {
             knowledgeService.addPairToGraph(pair, res, 50);
         }
 
         // 将所有的节点放入nodes中
-        List<Knowledge> knowledges = knowledgeRepository.findAll();
-        for (Knowledge knowledge : knowledges) {
-            nodes.add(knowledgeService.getNode(knowledge, 50));
-        }
+//        List<Knowledge> knowledges = knowledgeRepository.findAll();
+//        for (Knowledge knowledge : knowledges) {
+//            nodes.add(knowledgeService.getNode(knowledge, 50));
+//        }
 
         // 给每个节点设置位置
         for (Map<String, Object> node : (HashSet<Map<String, Object>>) res.get("nodes")) {

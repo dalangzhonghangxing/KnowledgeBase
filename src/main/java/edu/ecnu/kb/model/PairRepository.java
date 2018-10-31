@@ -34,4 +34,11 @@ public interface PairRepository extends BaseRepository<Pair> {
     @Query(value = "select count(*) from pair where relation is not null",
             nativeQuery = true)
     long findTagedCount();
+
+    @Query(value = "select * from pair where relation in ?1", nativeQuery = true)
+    List<Pair> findAllByRelationId(Long[] relationIds);
+
+    @Query(value = "select count(*) from pair left join pair_sentences on pair.id = pair_sentences.pair_id where relation is not null",
+            nativeQuery = true)
+    Object findTagedInstanceCount();
 }
