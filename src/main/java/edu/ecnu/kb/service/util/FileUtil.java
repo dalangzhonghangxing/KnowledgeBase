@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 文件操作工具类
@@ -171,4 +170,54 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 根据文件路径，读取文件，并将内容按行解析放入list中。
+     *
+     * @param filePath
+     * @return
+     */
+    public static List<String> readFile(String filePath) {
+        List<String> lines = new ArrayList<>();
+        File file = new File(filePath);
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.equals(""))
+                    lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                }
+            }
+        }
+        return lines;
+    }
+
+    /**
+     * 获取指定目录下，所有文件的文件名。
+     *
+     * @param dir
+     * @return
+     */
+    public static List<String> getFileNames(String dir) {
+        File file = new File(dir);
+
+        File[] subFiles = file.listFiles();
+        List<String> res = new ArrayList<>(subFiles.length);
+
+        for (File f : subFiles) {
+            res.add(f.getName());
+        }
+        return res;
+    }
+
 }

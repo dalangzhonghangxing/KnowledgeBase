@@ -57,5 +57,5 @@ spring:
 ecnu:
     kb:
         filesystem: ../../file
-        python-project-path: /Users/hang/PycharmProjects/Test/
+        python-project-path: /Users/hang/PycharmProjects/KnowledgeBase/
         dataset-path: /Users/hang/PycharmProjects/Test/generatedBySystem.txt
