@@ -211,6 +211,8 @@ public class FileUtil {
     public static List<String> getFileNames(String dir) {
         File file = new File(dir);
 
+        System.out.println(dir);
+
         File[] subFiles = file.listFiles();
         List<String> res = new ArrayList<>(subFiles.length);
 
