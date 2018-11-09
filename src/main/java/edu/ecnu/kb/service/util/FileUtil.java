@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * 文件操作工具类
@@ -209,15 +213,17 @@ public class FileUtil {
      * @return
      */
     public static List<String> getFileNames(String dir) {
-        File file = new File(dir);
 
-        System.out.println(dir);
+        List<String> res = new ArrayList<>();
 
-        File[] subFiles = file.listFiles();
-        List<String> res = new ArrayList<>(subFiles.length);
-
-        for (File f : subFiles) {
-            res.add(f.getName());
+        try (
+                Stream<Path> stream = Files.list(Paths.get(dir));
+        ) {
+            stream.forEach(x -> {
+                res.add(x.getFileName().toString());
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return res;
     }
