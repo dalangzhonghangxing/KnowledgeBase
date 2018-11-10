@@ -4,10 +4,7 @@ import edu.ecnu.kb.service.util.FileUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 用加载模型训练结果
@@ -19,6 +16,11 @@ public class ShowResultService {
     private String projectPath;
 
     private String resultPath = "data/result/";
+
+    private final static int TRAIN_LOSS = 0;
+    private final static int TEST_LOSS = 1;
+    private final static int TRAIN_ACCURACY = 2;
+    private final static int TEST_ACCURACY = 3;
 
     /**
      * 根据模型的名称，加载训练中间结果。用于画折线图。
@@ -96,7 +98,7 @@ public class ShowResultService {
             try {
                 res.add(Double.valueOf(d));
             } catch (Exception e) {
-                e.printStackTrace();
+
             }
         }
 
@@ -113,4 +115,81 @@ public class ShowResultService {
         }
         return res;
     }
+
+    /**
+     * 根据模型的名称，获取多个模型的测试集loss对比折现图数据
+     */
+    public Map<String, Object> getLosses(String[] modelNames) {
+        // 将modelNames作为legendData
+        List<String> legendData = Arrays.asList(modelNames);
+
+        // 封装series
+        List<Map<String, Object>> series = new ArrayList<>();
+        for (String modelName : modelNames) {
+            series.add(getSeries(modelName, "line", getTestLoss(modelName)));
+        }
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("legendData", legendData);
+        res.put("series", series);
+        return res;
+    }
+
+    /**
+     * 根据模型的名称，获取多个模型的测试集accuracy对比折现图数据
+     */
+    public Map<String, Object> getAccuracies(String[] modelNames) {
+        // 将modelNames作为legendData
+        List<String> legendData = Arrays.asList(modelNames);
+
+        // 封装series
+        List<Map<String, Object>> series = new ArrayList<>();
+        for (String modelName : modelNames) {
+            series.add(getSeries(modelName, "line", getTestAccuracy(modelName)));
+        }
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("legendData", legendData);
+        res.put("series", series);
+        return res;
+    }
+
+    /**
+     * 获取一个模型的loss
+     *
+     * @param modelName
+     * @return
+     */
+    private List<Double> getTestLoss(String modelName) {
+        List<String> lines = FileUtil.readFile(projectPath + resultPath + modelName + ".result");
+        return getDataByType(lines, TEST_LOSS);
+    }
+
+    /**
+     * 获取一个模型的loss
+     *
+     * @param modelName
+     * @return
+     */
+    private List<Double> getTestAccuracy(String modelName) {
+        List<String> lines = FileUtil.readFile(projectPath + resultPath + modelName + ".result");
+        return getDataByType(lines, TEST_ACCURACY);
+    }
+
+    /**
+     * 根据数据类型，返回某个数据
+     *
+     * @param lines
+     * @param type
+     * @return
+     */
+    private List<Double> getDataByType(List<String> lines, int type) {
+        List<Double> res = new ArrayList<>();
+        while (type < lines.size()) {
+            res.addAll(parseStringToDoubles(lines.get(type)));
+            type += 4;
+        }
+        return res;
+    }
+
 }

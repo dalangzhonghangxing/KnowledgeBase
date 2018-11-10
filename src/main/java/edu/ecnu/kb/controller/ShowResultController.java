@@ -18,13 +18,42 @@ public class ShowResultController extends BaseController {
     @Autowired
     private ShowResultService service;
 
+    /**
+     * 根据模型名称，获取loss与accuracy
+     * @param modelName
+     * @return
+     */
     @RequestMapping(value = BASE_API + "/line", method = RequestMethod.GET)
     public Map<String, Object> upload(@RequestParam String modelName) {
         return service.getResultByModelName(modelName);
     }
 
+    /**
+     * 获取已有训练结果的模型名称
+     * @return
+     */
     @RequestMapping(value = BASE_API + "/modelNames", method = RequestMethod.GET)
     public List<String> getModelNamesInResult() {
         return service.getModelNamesInResult();
     }
+
+    /**
+     * 获取指定模型的loss
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/loss", method = RequestMethod.GET)
+    public Map<String, Object> getLosses(@RequestParam String[] modelNames) {
+        return service.getLosses(modelNames);
+    }
+
+    /**
+     * 获取已有训练结果的模型名称
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/accuracy", method = RequestMethod.GET)
+    public Map<String, Object> getAccuracies(@RequestParam String[] modelNames) {
+        return service.getAccuracies(modelNames);
+    }
+
+
 }
