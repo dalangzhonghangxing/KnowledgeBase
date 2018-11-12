@@ -55,5 +55,14 @@ public class ShowResultController extends BaseController {
         return service.getAccuracies(modelNames);
     }
 
+    /**
+     * 删除指定结果名称
+     * @return
+     */
+    @RequestMapping(value = BASE_API , method = RequestMethod.DELETE)
+    public List<String> deleteResult(@RequestParam String modelName) {
+        return service.deleteResult(modelName);
+    }
+
 
 }

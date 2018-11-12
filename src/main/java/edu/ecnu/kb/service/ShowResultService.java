@@ -4,6 +4,7 @@ import edu.ecnu.kb.service.util.FileUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -192,4 +193,15 @@ public class ShowResultService {
         return res;
     }
 
+    /**
+     * 删除指定result
+     *
+     * @param modelName
+     * @return
+     */
+    public List<String> deleteResult(String modelName) {
+        File dir = new File(projectPath + resultPath);
+        FileUtil.removeFile(dir, modelName + ".result");
+        return getModelNamesInResult();
+    }
 }

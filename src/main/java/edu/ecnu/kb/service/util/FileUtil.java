@@ -114,7 +114,7 @@ public class FileUtil {
      * @param dir      目录
      * @param fileName 文件名称
      */
-    private static void removeFile(File dir, String fileName) {
+    public static void removeFile(File dir, String fileName) {
         File file = new File(dir, fileName);
         if (file.exists())
             file.delete();
