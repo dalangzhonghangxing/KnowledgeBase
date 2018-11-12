@@ -367,14 +367,48 @@ public class PairService extends BaseService {
 
     /**
      * 上传
-     *
-     * @param file
-     * @param tag
-     * @return
      */
     public Map<String, Object> upload(InputStream file, String tag) {
         List<Pair> pairs = new ArrayList<>();
         return uploadProcess(file, rowProcessor, tag, pairs, repository);
+    }
+
+    /**
+     * 获取柱状图数据。
+     * <p>
+     * 统计每种关系的数量。
+     */
+    public Map<String, Object> getBarData() {
+        Map<String, Object> res = new HashMap<>();
+        List<Object[]> count = repository.getCountByGroup();
+        List<String> xAxisData = new ArrayList<>();
+        List<Map<String, Object>> series = new ArrayList<>();
+        List<Integer> seriesData = new ArrayList<>();
+
+        for (Object[] record : count) {
+            xAxisData.add(record[0].toString());
+            seriesData.add(Integer.valueOf(record[1].toString()));
+        }
+        series.add(getSeries("知识对数量", "bar", seriesData));
+        res.put("series",series);
+        res.put("xAxisData",xAxisData);
+        return res;
+    }
+
+    /**
+     * 封装一个Series
+     * @param name
+     * @param type
+     * @param seriesData
+     * @return
+     */
+    private Map<String, Object> getSeries(String name, String type, List<Integer> seriesData) {
+        Map<String, Object> res = new HashMap<>();
+        res.put("name", name);
+        res.put("type", type);
+        res.put("data", seriesData);
+        res.put("barWidth", "60%");
+        return res;
     }
 
 }

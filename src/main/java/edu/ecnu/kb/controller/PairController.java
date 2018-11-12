@@ -137,4 +137,13 @@ public class PairController extends BaseController {
         }
         return null;
     }
+
+    /**
+     * 获取柱状图分析数据
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/count", method = RequestMethod.GET)
+    public Map<String,Object> getBarData(){
+        return service.getBarData();
+    }
 }
