@@ -42,6 +42,12 @@ public interface PairRepository extends BaseRepository<Pair> {
             nativeQuery = true)
     Object findTagedInstanceCount();
 
-    @Query(value = "select r.name,count(*) as count from pair right join relation r on pair.relation = r.id group by r.name  order by count",nativeQuery = true)
+    @Query(value = "select r.name,count(*) as count from pair right join relation r on pair.relation = r.id group by r.name  order by count", nativeQuery = true)
     List<Object[]> getCountByGroup();
+
+    @Query(value = "select relation.name,count(*) as count from pair left join pair_sentences on pair_sentences.pair_id = pair.id " +
+            "left join sentence on sentence.id = pair_sentences.sentences_id " +
+            "left join relation on relation.id = pair.relation where pair.relation is not null group by relation.id order by count"
+            , nativeQuery = true)
+    List<Object[]> getCountGroupByRelation();
 }

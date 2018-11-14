@@ -459,4 +459,25 @@ public class PairService extends BaseService {
         return res;
     }
 
+    /**
+     * 获取关系对 实例 数量柱状图分析数据
+     *
+     * @return
+     */
+    public Map<String,Object> getSentenceBarData() {
+        Map<String, Object> res = new HashMap<>();
+        List<Object[]> count = repository.getCountGroupByRelation();
+        List<String> xAxisData = new ArrayList<>();
+        List<Map<String, Object>> series = new ArrayList<>();
+        List<Integer> seriesData = new ArrayList<>();
+
+        for (Object[] record : count) {
+            xAxisData.add(record[0].toString());
+            seriesData.add(Integer.valueOf(record[1].toString()));
+        }
+        series.add(getSeries("实例数量", "bar", seriesData));
+        res.put("series", series);
+        res.put("xAxisData", xAxisData);
+        return res;
+    }
 }

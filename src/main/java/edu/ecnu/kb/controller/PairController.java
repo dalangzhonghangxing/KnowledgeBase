@@ -148,12 +148,22 @@ public class PairController extends BaseController {
     }
 
     /**
-     * 获取柱状图分析数据
+     * 获取关系对数量柱状图分析数据
      *
      * @return
      */
     @RequestMapping(value = BASE_API + "/count", method = RequestMethod.GET)
     public Map<String, Object> getBarData() {
         return service.getBarData();
+    }
+
+    /**
+     * 获取关系对 实例 数量柱状图分析数据
+     *
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/instance-count", method = RequestMethod.GET)
+    public Map<String, Object> getSentenceBarData() {
+        return service.getSentenceBarData();
     }
 }
