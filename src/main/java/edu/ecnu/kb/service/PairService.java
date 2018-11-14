@@ -67,14 +67,7 @@ public class PairService extends BaseService {
         SessionUtil.set(tag, 10);
 
         // 为每句句子分词后的单词生一个wordset，从而提高查询性能
-        List<Set<String>> wordSets = new ArrayList<>();
-        for (Sentence sentence : sentences) {
-            if (sentence.getSplited() != null) {
-                Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split("\\s+")));
-                wordSets.add(wordSet);
-            } else
-                wordSets.add(new HashSet<>());
-        }
+        List<Set<String>> wordSets = getWordSet(sentences);
         SessionUtil.set(tag, 15);
 
         // 遍历所有的知识点组合，将不存在的组合生成新的pair。
@@ -112,6 +105,60 @@ public class PairService extends BaseService {
         Map<String, Object> res = new HashMap<>();
         res.put("size", newPairs.size());
         return res;
+    }
+
+    /**
+     * 将已有关系对于句子关联起来。
+     */
+    public Map<String, Object> accocateSentences(String tag) {
+        List<Pair> pairs = repository.findAll();
+        List<Sentence> sentences = sentenceRepository.findAll();
+
+        // 获得一个顺序与sentences一直的wordet
+        List<Set<String>> wordSet = getWordSet(sentences);
+        SessionUtil.set(tag, 15);
+
+        int size = 0;
+        int index = 0;
+        for (Pair pair : pairs) {
+            Set<Sentence> ss = new HashSet<>();
+            for (int i = 0; i < wordSet.size(); i++) {
+                // 将同时包含当前知识点对的两个知识点的句子加入到ss集合。
+                if (wordSet.get(i).contains(pair.getKnowledgeA().getName())
+                        && wordSet.get(i).contains(pair.getKnowledgeB().getName()))
+                    ss.add(sentences.get(i));
+            }
+            pair.setSentences(ss);
+            size += ss.size();
+
+            // 设置进度条
+            index++;
+            SessionUtil.set(tag, 85 * index / pairs.size());
+        }
+        batchSave(pairs, repository);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("size", size);
+        return res;
+    }
+
+    /**
+     * 为每个sentence构建wordset，从在提高判断单词是否存在句子中的性能。
+     *
+     * @param sentences
+     * @return
+     */
+    private List<Set<String>> getWordSet(List<Sentence> sentences) {
+        // 为每句句子分词后的单词生一个wordset，从而提高查询性能
+        List<Set<String>> wordSets = new ArrayList<>();
+        for (Sentence sentence : sentences) {
+            if (sentence.getSplited() != null) {
+                Set<String> wordSet = new HashSet<>(Arrays.asList(sentence.getSplited().split("\\s+")));
+                wordSets.add(wordSet);
+            } else
+                wordSets.add(new HashSet<>());
+        }
+        return wordSets;
     }
 
     /**
@@ -390,13 +437,14 @@ public class PairService extends BaseService {
             seriesData.add(Integer.valueOf(record[1].toString()));
         }
         series.add(getSeries("知识对数量", "bar", seriesData));
-        res.put("series",series);
-        res.put("xAxisData",xAxisData);
+        res.put("series", series);
+        res.put("xAxisData", xAxisData);
         return res;
     }
 
     /**
      * 封装一个Series
+     *
      * @param name
      * @param type
      * @param seriesData

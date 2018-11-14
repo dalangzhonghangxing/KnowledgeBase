@@ -29,6 +29,15 @@ public class PairController extends BaseController {
     }
 
     /**
+     * 将已有关系对于句子关联起来
+     */
+    @RequestMapping(value = BASE_API + "/sentences", method = RequestMethod.POST)
+    public Map<String, Object> accocateSentences(@RequestBody String tag) {
+        return service.accocateSentences(JSON.parseObject(tag).getString("tag"));
+    }
+
+
+    /**
      * 分页获取
      *
      * @param page
@@ -140,10 +149,11 @@ public class PairController extends BaseController {
 
     /**
      * 获取柱状图分析数据
+     *
      * @return
      */
     @RequestMapping(value = BASE_API + "/count", method = RequestMethod.GET)
-    public Map<String,Object> getBarData(){
+    public Map<String, Object> getBarData() {
         return service.getBarData();
     }
 }
