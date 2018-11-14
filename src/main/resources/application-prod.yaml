@@ -28,7 +28,7 @@ spring:
             time-between-eviction-runs-millis: 34000
             validation-query: SELECT 1
         url: jdbc:mysql://localhost:3306/knowledgebase?useUnicode=true&characterEncoding=UTF-8&useOldAliasMetadataBehavior=true
-        username: yjsy_nginx
+        username: root
         password: root
     data:
         rest:
