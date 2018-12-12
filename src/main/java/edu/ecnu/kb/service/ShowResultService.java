@@ -109,8 +109,8 @@ public class ShowResultService {
     /**
      * 获取result目录下，所有文件名称。
      */
-    public List<String> getModelNamesInResult() {
-        List<String> res = new ArrayList<>();
+    public Set<String> getModelNamesInResult() {
+        Set<String> res = new HashSet<>();
         for (String fileName : FileUtil.getFileNames(projectPath + resultPath)) {
             res.add(fileName.split("\\.")[0]);
         }
@@ -199,9 +199,48 @@ public class ShowResultService {
      * @param modelName
      * @return
      */
-    public List<String> deleteResult(String modelName) {
+    public Set<String> deleteResult(String modelName) {
         File dir = new File(projectPath + resultPath);
         FileUtil.removeFile(dir, modelName + ".result");
+        FileUtil.removeFile(dir, modelName + ".pr");
         return getModelNamesInResult();
+    }
+
+    /**
+     * 根据模型的名称，获取多个模型的测试集precision-recall对比折现图数据
+     */
+    public Map<String, Object> getPRs(String[] modelNames) {
+        // 将modelNames作为legendData
+        List<String> legendData = Arrays.asList(modelNames);
+
+        // 封装series
+        List<Map<String, Object>> series = new ArrayList<>();
+        for (String modelName : modelNames) {
+            series.add(getSeries(modelName, "line", getPR(modelName)));
+        }
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("legendData", legendData);
+        res.put("series", series);
+        return res;
+    }
+
+
+    /**
+     * 根据modelName获取一个模型的Precision-Recall值
+     * @param modelName
+     * @return
+     */
+    private List<Double> getPR(String modelName) {
+        List<String> lines = FileUtil.readFile(projectPath + resultPath + modelName + ".pr");
+        if(lines.size() == 0)
+            return new ArrayList<>();
+        String[] values = lines.get(0).split(" ");
+        List<Double> res = new ArrayList<>();
+        for (int i = 0; i < values.length; i += 10) {
+            res.add(Double.valueOf(values[i]));
+        }
+
+        return res;
     }
 }

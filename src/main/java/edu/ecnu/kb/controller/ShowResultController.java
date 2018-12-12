@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 public class ShowResultController extends BaseController {
@@ -33,7 +34,7 @@ public class ShowResultController extends BaseController {
      * @return
      */
     @RequestMapping(value = BASE_API + "/modelNames", method = RequestMethod.GET)
-    public List<String> getModelNamesInResult() {
+    public Set<String> getModelNamesInResult() {
         return service.getModelNamesInResult();
     }
 
@@ -56,11 +57,20 @@ public class ShowResultController extends BaseController {
     }
 
     /**
+     * 获取已有训练结果的模型名称
+     * @return
+     */
+    @RequestMapping(value = BASE_API + "/pr", method = RequestMethod.GET)
+    public Map<String, Object> getPRs(@RequestParam String[] modelNames) {
+        return service.getPRs(modelNames);
+    }
+
+    /**
      * 删除指定结果名称
      * @return
      */
     @RequestMapping(value = BASE_API , method = RequestMethod.DELETE)
-    public List<String> deleteResult(@RequestParam String modelName) {
+    public Set<String> deleteResult(@RequestParam String modelName) {
         return service.deleteResult(modelName);
     }
 
