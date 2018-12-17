@@ -149,8 +149,6 @@ public class PairController extends BaseController {
 
     /**
      * 获取关系对数量柱状图分析数据
-     *
-     * @return
      */
     @RequestMapping(value = BASE_API + "/count", method = RequestMethod.GET)
     public Map<String, Object> getBarData() {
@@ -159,11 +157,19 @@ public class PairController extends BaseController {
 
     /**
      * 获取关系对 实例 数量柱状图分析数据
-     *
-     * @return
      */
     @RequestMapping(value = BASE_API + "/instance-count", method = RequestMethod.GET)
     public Map<String, Object> getSentenceBarData() {
         return service.getSentenceBarData();
     }
+
+    /**
+     * 获取实体对的句子数量分布柱状图分析数据
+     */
+    @RequestMapping(value = BASE_API + "/entity-pair-sentence-count", method = RequestMethod.GET)
+    public Map<String, Object> getPairSentenceBarData() {
+        return service.getPairSentenceBarData();
+    }
+
+
 }

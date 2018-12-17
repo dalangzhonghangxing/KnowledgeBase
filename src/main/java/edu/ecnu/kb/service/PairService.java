@@ -5,6 +5,8 @@ import edu.ecnu.kb.model.*;
 import edu.ecnu.kb.service.upload.PairRowProcessor;
 import edu.ecnu.kb.service.util.FileUtil;
 import edu.ecnu.kb.service.util.SessionUtil;
+import jnr.ffi.annotations.In;
+import org.python.modules.itertools.count;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.*;
 
 @Service
@@ -464,7 +467,7 @@ public class PairService extends BaseService {
      *
      * @return
      */
-    public Map<String,Object> getSentenceBarData() {
+    public Map<String, Object> getSentenceBarData() {
         Map<String, Object> res = new HashMap<>();
         List<Object[]> count = repository.getCountGroupByRelation();
         List<String> xAxisData = new ArrayList<>();
@@ -476,6 +479,42 @@ public class PairService extends BaseService {
             seriesData.add(Integer.valueOf(record[1].toString()));
         }
         series.add(getSeries("实例数量", "bar", seriesData));
+        res.put("series", series);
+        res.put("xAxisData", xAxisData);
+        return res;
+    }
+
+    /**
+     * 获取实体对的句子数量分布柱状图分析数据
+     */
+    public Map<String, Object> getPairSentenceBarData() {
+        List<Object> entityPairCount = repository.getCountByEntityPair();
+        List<Integer> xAxisData = new ArrayList<>();
+        List<Integer> seriesData = new ArrayList<>();
+
+        // 计数
+        int index = -1;
+        Integer count;
+        for (Object c : entityPairCount) {
+            count = ((BigInteger)c).intValue();
+            if (index == -1) {
+                xAxisData.add(count);
+                seriesData.add(0);
+                index++;
+            }
+            if (count.equals(xAxisData.get(index))) {
+                seriesData.set(index, seriesData.get(index) + 1);
+            } else {
+                xAxisData.add(count);
+                seriesData.add(1);
+                index++;
+            }
+        }
+
+        List<Map<String, Object>> series = new ArrayList<>();
+        series.add(getSeries("句子数量数量", "bar", seriesData));
+
+        Map<String, Object> res = new HashMap<>();
         res.put("series", series);
         res.put("xAxisData", xAxisData);
         return res;

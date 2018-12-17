@@ -237,7 +237,7 @@ public class ShowResultService {
             return new ArrayList<>();
         String[] values = lines.get(0).split(" ");
         List<Double> res = new ArrayList<>();
-        for (int i = 0; i < values.length; i += 10) {
+        for (int i = 0; i < values.length; i += 1) {
             res.add(Double.valueOf(values[i]));
         }
 

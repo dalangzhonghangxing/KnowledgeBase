@@ -50,4 +50,7 @@ public interface PairRepository extends BaseRepository<Pair> {
             "left join relation on relation.id = pair.relation where pair.relation is not null group by relation.id order by count"
             , nativeQuery = true)
     List<Object[]> getCountGroupByRelation();
+
+    @Query(value = "select count(*) as c from pair_sentences group by pair_id order by c",nativeQuery = true)
+    List<Object> getCountByEntityPair();
 }
