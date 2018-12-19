@@ -216,7 +216,10 @@ public class ShowResultService {
         // 封装series
         List<Map<String, Object>> series = new ArrayList<>();
         for (String modelName : modelNames) {
-            series.add(getSeries(modelName, "line", getPR(modelName)));
+            Map<String, Object> serie = getSeries(modelName, "line", getPR(modelName));
+            serie.put("smooth", true);
+            serie.put("symbolSize", 1);
+            series.add(serie);
         }
 
         Map<String, Object> res = new HashMap<>();
@@ -228,17 +231,22 @@ public class ShowResultService {
 
     /**
      * 根据modelName获取一个模型的Precision-Recall值
+     *
      * @param modelName
      * @return
      */
-    private List<Double> getPR(String modelName) {
+    private List<Double[]> getPR(String modelName) {
         List<String> lines = FileUtil.readFile(projectPath + resultPath + modelName + ".pr");
-        if(lines.size() == 0)
+        if (lines.size() == 0)
             return new ArrayList<>();
-        String[] values = lines.get(0).split(" ");
-        List<Double> res = new ArrayList<>();
-        for (int i = 0; i < values.length; i += 1) {
-            res.add(Double.valueOf(values[i]));
+        String[] precisions = lines.get(0).split(" ");
+        String[] recalls = lines.get(1).split(" ");
+        List<Double[]> res = new ArrayList<>();
+        for (int i = 0; i < precisions.length; i += 1) {
+            Double[] item = new Double[2];
+            item[0] = Double.valueOf(recalls[i]);
+            item[1] = Double.valueOf(precisions[i]);
+            res.add(item);
         }
 
         return res;

@@ -48,7 +48,7 @@ public class ShowResultController extends BaseController {
     }
 
     /**
-     * 获取已有训练结果的模型名称
+     * 获取指定模型的accuracy
      * @return
      */
     @RequestMapping(value = BASE_API + "/accuracy", method = RequestMethod.GET)
@@ -57,7 +57,7 @@ public class ShowResultController extends BaseController {
     }
 
     /**
-     * 获取已有训练结果的模型名称
+     * 获取指定模型的precision-recall
      * @return
      */
     @RequestMapping(value = BASE_API + "/pr", method = RequestMethod.GET)

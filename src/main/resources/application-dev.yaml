@@ -27,7 +27,7 @@ spring:
             test-while-idle: true
             time-between-eviction-runs-millis: 34000
             validation-query: SELECT 1
-        url: jdbc:mysql://219.228.60.212:3306/knowledgebase?useUnicode=true&characterEncoding=UTF-8&useOldAliasMetadataBehavior=true
+        url: jdbc:mysql://172.31.254.86:3306/knowledgebase?useUnicode=true&characterEncoding=UTF-8&useOldAliasMetadataBehavior=true
 #        username: yjsy_nginx
         username: root
         password: root
