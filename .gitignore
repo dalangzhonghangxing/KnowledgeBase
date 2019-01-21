@@ -31,3 +31,5 @@ log
 # python
 *.pkl
 mnist
+
+.DS_Store

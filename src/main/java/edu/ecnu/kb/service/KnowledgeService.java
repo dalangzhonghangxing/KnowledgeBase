@@ -110,6 +110,7 @@ public class KnowledgeService extends BaseService {
     public void addPairToGraph(Pair pair, Map<String, Object> graph, int nodeSize) {
         if (pair.getRelation() == null
                 || pair.getRelation().getName().equals("无关")
+                || pair.getRelation().getName().equals("其它")
                 || pair.getRelation().getName().equals("待定"))
             return;
 

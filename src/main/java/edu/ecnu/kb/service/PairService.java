@@ -436,6 +436,8 @@ public class PairService extends BaseService {
         List<Integer> seriesData = new ArrayList<>();
 
         for (Object[] record : count) {
+            if(record[0].toString().equals("待定"))
+                continue;
             xAxisData.add(record[0].toString());
             seriesData.add(Integer.valueOf(record[1].toString()));
         }
@@ -475,6 +477,8 @@ public class PairService extends BaseService {
         List<Integer> seriesData = new ArrayList<>();
 
         for (Object[] record : count) {
+            if(record[0].toString().equals("待定"))
+                continue;
             xAxisData.add(record[0].toString());
             seriesData.add(Integer.valueOf(record[1].toString()));
         }
