@@ -171,5 +171,12 @@ public class PairController extends BaseController {
         return service.getPairSentenceBarData();
     }
 
+    /**
+     * 查找knowledgeA到knowledgeB的知识路径。
+     */
+    @RequestMapping(value = BASE_API + "/concept-query", method = RequestMethod.GET)
+    public  Map<String, Object> queryConcept(String knowledgeA,String knowledgeB){
+        return service.queryConcept(knowledgeA,knowledgeB);
+    }
 
 }

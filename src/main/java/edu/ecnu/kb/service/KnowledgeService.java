@@ -166,4 +166,16 @@ public class KnowledgeService extends BaseService {
         node.put("size", nodeSize);
         return node;
     }
+
+    /**
+     * 将一个知识点封装成node格式。
+     *
+     * @param knowledge
+     * @return
+     */
+    public Map<String, Object> getNode(Knowledge knowledge, int nodeSize,String color) {
+        Map<String, Object> node = getNode(knowledge,nodeSize);
+        node.put("color",color);
+        return node;
+    }
 }

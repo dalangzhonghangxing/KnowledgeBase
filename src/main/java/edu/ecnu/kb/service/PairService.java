@@ -436,7 +436,7 @@ public class PairService extends BaseService {
         List<Integer> seriesData = new ArrayList<>();
 
         for (Object[] record : count) {
-            if(record[0].toString().equals("待定"))
+            if (record[0].toString().equals("待定"))
                 continue;
             xAxisData.add(record[0].toString());
             seriesData.add(Integer.valueOf(record[1].toString()));
@@ -477,7 +477,7 @@ public class PairService extends BaseService {
         List<Integer> seriesData = new ArrayList<>();
 
         for (Object[] record : count) {
-            if(record[0].toString().equals("待定"))
+            if (record[0].toString().equals("待定"))
                 continue;
             xAxisData.add(record[0].toString());
             seriesData.add(Integer.valueOf(record[1].toString()));
@@ -500,7 +500,7 @@ public class PairService extends BaseService {
         int index = -1;
         Integer count;
         for (Object c : entityPairCount) {
-            count = ((BigInteger)c).intValue();
+            count = ((BigInteger) c).intValue();
             if (index == -1) {
                 xAxisData.add(count);
                 seriesData.add(0);
@@ -522,5 +522,143 @@ public class PairService extends BaseService {
         res.put("series", series);
         res.put("xAxisData", xAxisData);
         return res;
+    }
+
+    /**
+     * 查找knowledgeA到knowledgeB的知识路径。
+     * <p>
+     * 1. 查找所有与knowledgeB有关的边ebs，将knowledgeA放入origins结合中
+     * 2. 将ebs相关的节点设为目标知识点targets
+     * 3. 判断origins中的节点与targets的交集是否为空，如果不为空，则返回路径；否则进行4
+     * 4. 使用pathMap记录每个节点的上层路径，对每个最下层节点进行宽度有限遍历，往外扩一层，得到新的origins节点，并执行步骤3；
+     */
+    public Map<String, Object> queryConcept(String knowledgeA, String knowledgeB) {
+        Knowledge ka = knowledgeRepository.findByName(knowledgeA);
+        Knowledge kb = knowledgeRepository.findByName(knowledgeB);
+
+        Set<Knowledge> visited = new HashSet<>();
+        Map<Knowledge, Pair> pathMap = new HashMap<>();
+
+        // 生成origins
+        Set<Knowledge> origins = new HashSet<>();
+        Set<Knowledge> oldOrigins;
+        origins.add(ka);
+
+        // 生成targets
+        List<Pair> ebs = repository.findByKnowledge(kb);
+        Set<Knowledge> targets = new HashSet<>();
+        ebs.forEach(pair -> {
+            targets.add(pair.getKnowledgeA());
+            targets.add(pair.getKnowledgeB());
+        });
+
+        // 交集元素
+        Knowledge intersectedKnowledge;
+        while (true) {
+            intersectedKnowledge = (Knowledge) isIntersected(origins, targets);
+            if (intersectedKnowledge != null) {
+                // 有相交节点，则表示找到路径
+                break;
+            } else {
+                // 没有找到，将origins加入到visited中，然后找下一跳节点
+                visited.addAll(origins);
+                oldOrigins = origins;
+                origins = new HashSet<>();
+                for (Knowledge origin : oldOrigins) {
+                    List<Pair> nextHops = repository.findByKnowledge(origin);
+                    for (Pair nextHop : nextHops) {
+                        if(nextHop.getRelation().getName().equals("其它") ||
+                                nextHop.getRelation().getName().equals("待定"))
+                            continue;
+                        Knowledge newKnowledge = nextHop.getKnowledgeA().equals(origin) ? nextHop.getKnowledgeB() : nextHop.getKnowledgeA();
+                        if (visited.contains(newKnowledge)) continue;
+                        pathMap.put(newKnowledge, nextHop);
+                        origins.add(newKnowledge);
+                    }
+                }
+
+                if (origins.isEmpty())//没有新元素，则没有路径
+                    break;
+            }
+
+
+        }
+
+        if (intersectedKnowledge != null) {//找到路径
+            return getPath(intersectedKnowledge, pathMap, ka, kb);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 根据相交节点、pathMap与两个目标知识点，整合出知识路径
+     */
+    private Map<String, Object> getPath(Knowledge intersectedKnowledge, Map<Knowledge, Pair> pathMap, Knowledge knowledgeA, Knowledge knowledgeB) {
+        // 寻找交集元素向前的路径
+        List<Pair> frontPath = new ArrayList<>();
+        Knowledge tmp = intersectedKnowledge;
+        Pair p;
+        while (pathMap.get(tmp) != null) {
+            frontPath.add(pathMap.get(tmp));
+            p = pathMap.get(tmp);
+            if (!tmp.equals(p.getKnowledgeA()))
+                tmp = p.getKnowledgeA();
+            else
+                tmp = p.getKnowledgeB();
+        }
+
+        // 寻找交集元素向后的路径
+        if (!intersectedKnowledge.equals(knowledgeB)) {
+            Pair backPath = repository.findByKnowledgeAAndKnowledgeB(intersectedKnowledge, knowledgeB);
+            if (backPath == null)
+                backPath = repository.findByKnowledgeAAndKnowledgeB(knowledgeB, intersectedKnowledge);
+            frontPath.add(backPath);
+        }
+
+        // 整合成前端需要的格式
+        Map<String, Object> res = new HashMap<>();
+        Set<Map<String, Object>> nodes = new HashSet<>();
+        List<Map<String, Object>> edge = new ArrayList<>();
+        res.put("nodes", nodes);
+        res.put("edges", edge);
+
+        // 将所有的边与相关节点放入图中
+        for (Pair pair : frontPath) {
+            knowledgeService.addPairToGraph(pair, res, 50);
+        }
+
+        // 将两个目标知识点放入nodes中
+        nodes.add(knowledgeService.getNode(knowledgeA, 50));
+        nodes.add(knowledgeService.getNode(knowledgeB, 50));
+
+        // 给每个节点设置位置
+        for (Map<String, Object> node : (HashSet<Map<String, Object>>) res.get("nodes")) {
+            node.put("x", Math.random() * 100);
+            node.put("y", Math.random() * 100);
+
+            if (node.get("id").equals(knowledgeA.getId())) {
+                node.put("color", "green");
+            } else if (node.get("id").equals(knowledgeB.getId())) {
+                node.put("color", "yellow");
+            } else {
+                node.put("color", "red");
+            }
+        }
+        return res;
+
+    }
+
+    /**
+     * 判断两个集合是否相交
+     *
+     * @return true为相交，false为不相交
+     */
+    private Object isIntersected(Set setA, Set setB) {
+        for (Object b : setB) {
+            if (setA.contains(b))
+                return b;
+        }
+        return null;
     }
 }
